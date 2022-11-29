@@ -1,4 +1,5 @@
 import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
+import { HttpException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcryptjs';
 import { loginDto } from 'src/dto/loginDto';
@@ -16,13 +17,15 @@ constructor(
       ) {}
 
   async addUser(registerDto: registerDto): Promise<UserEntity|any> {
+    if(registerDto.password!==registerDto.passwordcf){
+      throw new HttpException('mat khau khong trung',400);
+    } 
     const checkUser= await this.usersRepository.findOne({where:{username: registerDto.username}});
     console.log(checkUser)
     if (checkUser){
         throw new ConflictException(`User with username ${registerDto.username} already exists`);
     }
     const newUser = await this.usersRepository.create(registerDto);
-
     newUser.password = await hasPassword(newUser.password)
     return newUser.save();
   }
