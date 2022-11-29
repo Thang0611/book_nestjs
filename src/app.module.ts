@@ -11,10 +11,13 @@ import { BookEntity } from './book/book.entity';
 import { AuthModule } from './auth/auth.module';
 import { ImageModule } from './image/image.module';
 import * as dotenv from 'dotenv';
+import { ConfigService } from 'aws-sdk';
+import { ImageEntity } from './image/ImageEntity';
 dotenv.config();
 
 @Module({
   imports: [
+    // ConfigService,
     UserModule,
     TypeOrmModule.forRoot({
       
@@ -33,8 +36,9 @@ dotenv.config();
       username: process.env.TYPEORM_USERNAME,
       password: process.env.TYPEORM_PASSWORD,
       database: process.env.TYPEORM_DATABASE,
-      entities: [UserEntity,BookEntity],
-      synchronize: true
+      entities: [UserEntity,BookEntity,ImageEntity],
+      synchronize: true,
+      
     }),
     BookModule,
     AuthModule,

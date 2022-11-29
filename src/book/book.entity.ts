@@ -1,10 +1,11 @@
 import { Transform } from 'class-transformer';
 import moment from 'moment';
-import { Column, Entity, PrimaryGeneratedColumn, BaseEntity, CreateDateColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, BaseEntity, CreateDateColumn, JoinColumn, OneToOne } from 'typeorm';
+import { ImageEntity } from '../image/ImageEntity';
 @Entity('books')
 export class BookEntity extends BaseEntity{
     @PrimaryGeneratedColumn('uuid')
-    bookId:string;
+    bookId:number;
     @Column()
     title:string;
     @Column()
@@ -22,6 +23,15 @@ export class BookEntity extends BaseEntity{
     detail:string;
     @Column()
     amount:number
-    @Column({type: "blob"})
-    urlImage:string;
+    // @Column({type: "blob"})
+    // urlImage:string;
+    @JoinColumn()
+  @OneToOne(
+    () => ImageEntity,
+    {
+      eager: true,
+      nullable: true
+    }
+  )
+  public image?: ImageEntity;
 }

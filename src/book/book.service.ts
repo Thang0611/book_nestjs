@@ -3,25 +3,31 @@ import { BookEntity } from './book.entity';
 import { Repository } from 'typeorm';
 import {InjectRepository} from '@nestjs/typeorm'
 import { BookDto } from '../dto/bookDto';
+import { ImageEntity } from 'src/image/ImageEntity';
+import { ImageService } from 'src/image/image.service';
 @Injectable()
 export class BookService {
     constructor(
         @InjectRepository(BookEntity)
-        private bookRepository:Repository<BookEntity>
+        private bookRepository:Repository<BookEntity>,
+        private imageService:ImageService
     ){}
+
+
     getAllBooks(){
         return this.bookRepository.find()
     }
     detailBook(bookId){
         return this.bookRepository.findOne({where:{bookId}})
     }
+
+
     async create(bookDto:BookDto){
         
-        if (!bookDto.urlImage) bookDto.urlImage=''
+        // if (!bookDto.urlImage) bookDto.urlImage=''
         const book=await this.bookRepository.create(bookDto)
         console.log(book)
-        const data=await this.bookRepository.save(book)
-        
+        const data=await this.bookRepository.save(bookDto)
         if(data){
             console.log(bookDto)
             return {
@@ -38,6 +44,7 @@ export class BookService {
         }
     }
     
+
     updateBook(bookId,bookDto:BookDto){
         const bookUpdate =this.bookRepository.update({bookId},bookDto)
         if (bookUpdate){
@@ -55,6 +62,8 @@ export class BookService {
         }
         
     }
+
+    
     async deleteBook(bookId){
         const deleteBook= await this.bookRepository.delete(bookId)
         if (deleteBook){
@@ -70,20 +79,25 @@ export class BookService {
             }
         }
         
-        // this.bookRepository.findOne({where:{bookId}})
-        // .then(data=>{
-        //     console.log(data)
-        //     return {
-        //         data,
-        //         success:true
-        //     }
-        // })
-        // .catch(err=>{
-        //     console.log(err)
-        //     return {
-        //         err:true,
-        //         success:false
-        //     }
-        // })
     }
+    async getById(bookId:number){
+        const book=await this.bookRepository.findOne({where:{bookId:bookId}})
+        return book;
+    }
+
+    async updateImage(imageBuffer: Buffer, filename: string) {
+        const image = await this.imageService.uploadPublicFile(imageBuffer, filename);
+        return image;
+    }
+
+      async addImage(bookId: number, imageBuffer: Buffer, filename: string) {
+        console.log(bookId)
+        const image = await this.imageService.uploadPublicFile(imageBuffer, filename);
+        const book = await this.getById(bookId);
+        await this.bookRepository.update(bookId, {
+          ...book,
+          image
+        });
+        return image;
+      }
 }

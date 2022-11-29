@@ -21,7 +21,6 @@ constructor(
       throw new HttpException('mat khau khong trung',400);
     } 
     const checkUser= await this.usersRepository.findOne({where:{username: registerDto.username}});
-    console.log(checkUser)
     if (checkUser){
         throw new ConflictException(`User with username ${registerDto.username} already exists`);
     }

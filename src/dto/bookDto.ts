@@ -1,8 +1,9 @@
 import { Transform } from "class-transformer";
 import { IsNotEmpty, IsString } from "class-validator";
+import { ImageEntity } from "src/image/ImageEntity";
 
 export class BookDto{
-    bookid:string;
+    bookId:number;
     @IsString()
     @IsNotEmpty()
     title:string;
@@ -24,7 +25,8 @@ export class BookDto{
     @IsNotEmpty()
     amount:number;
     // @IsNotEmpty()
-    urlImage:string;
+    // urlImage:string;
+    image?: ImageEntity
 }
 
 
