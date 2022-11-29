@@ -8,7 +8,6 @@ import { AuthGuard } from '@nestjs/passport';
 @Controller('book')
 export class BookController {
     constructor (private bookService:BookService){}
-    @UseGuards(JwtAuthGuard)
     @Get()
     getAllBooks(){
         return this.bookService.getAllBooks()

@@ -10,18 +10,29 @@ import { BookModule } from './book/book.module';
 import { BookEntity } from './book/book.entity';
 import { AuthModule } from './auth/auth.module';
 import { ImageModule } from './image/image.module';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 @Module({
   imports: [
     UserModule,
     TypeOrmModule.forRoot({
-      // name:'user',
+      
+      // type: 'mysql',
+      // host: '',
+      // port: 3306,
+      // username: 'root',
+      // password: 'b19dcat187',
+      // database: 'libraly_app',
+      // entities: [UserEntity,BookEntity],
+      // synchronize: true
+
       type: 'mysql',
-      host: '127.0.0.1',
+      host: process.env.DATABASE_URL,
       port: 3306,
-      username: 'root',
-      password: 'b19dcat187',
-      database: 'libraly_app',
+      username: process.env.TYPEORM_USERNAME,
+      password: process.env.TYPEORM_PASSWORD,
+      database: process.env.TYPEORM_DATABASE,
       entities: [UserEntity,BookEntity],
       synchronize: true
     }),
