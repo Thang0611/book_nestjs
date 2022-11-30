@@ -1,4 +1,4 @@
-import { Logger, ValidationPipe } from '@nestjs/common';
+import { BadRequestException, Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as cookieParser from 'cookie-parser';
@@ -8,7 +8,8 @@ dotenv.config()
 // import { NextFunction, Request, Response } from 'express';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule,{cors:true,});
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe({transform: true}));
+  // app.useGlobalPipes(new ValidationPipe({exceptionFactory: (errors) => new BadRequestException(errors),}));
   console.log(process.env.PORT)
   await app.listen(process.env.PORT);
   app.enableCors();
@@ -18,7 +19,8 @@ async function bootstrap() {
   config.update({
     accessKeyId:process.env.AWS_ACCESS_KEY_ID, //configService.get('AWS_ACCESS_KEY_ID'),
     secretAccessKey:process.env.AWS_SECRET_ACCESS_KEY, //configService.get('AWS_SECRET_ACCESS_KEY'),
-    region:process.env.AWS_REGION //configService.get('AWS_REGION'),
+    region:process.env.AWS_REGION, //configService.get('AWS_REGION'),
+    
   });
 
   }

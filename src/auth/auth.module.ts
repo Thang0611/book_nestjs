@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { UserEntity } from '../user/user.entity';
@@ -10,6 +10,7 @@ import { UserService } from '../user/user.service';
 import { UserModule } from '../user/user.module';
 import { jwtConstants } from './constains';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { LoginValidateMiddleware } from 'src/middleware/loginValidate.middleware';
 
 @Module({
   imports:[UserEntity,
@@ -25,4 +26,10 @@ import { JwtStrategy } from './strategies/jwt.strategy';
   controllers: [AuthController],
   exports:[]
 })
-export class AuthModule {}
+export class AuthModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(LoginValidateMiddleware)
+      .forRoutes({ path: 'auth/login', method: RequestMethod.POST });
+  }
+}

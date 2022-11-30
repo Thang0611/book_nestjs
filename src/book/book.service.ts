@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus, BadRequestException } from '@nestjs/common';
 import { BookEntity } from './book.entity';
 import { Repository } from 'typeorm';
 import {InjectRepository} from '@nestjs/typeorm'
@@ -14,87 +14,70 @@ export class BookService {
     ){}
 
 
-    getAllBooks(){
-        return this.bookRepository.find()
+    async getAllBooks(){
+        return await this.bookRepository.find()
     }
-    detailBook(bookId){
-        return this.bookRepository.findOne({where:{bookId}})
+    async detailBook(id){
+        return await this.bookRepository.findOne({where:{id}})
     }
 
 
-    async create(bookDto:BookDto){
-        
+    async create(bookDto:BookDto):Promise<BookEntity>{
         // if (!bookDto.urlImage) bookDto.urlImage=''
-        const book=await this.bookRepository.create(bookDto)
-        console.log(book)
-        const data=await this.bookRepository.save(bookDto)
-        if(data){
-            console.log(bookDto)
-            return {
-                success:true,
-                msg:'Thêm sách thành công'
-            }
-        }
-        else{
-            console.log("err")
-            return {
-                success:false,
-                msg:'Thêm sách thất bại'
-            }
-        }
+        const book= await this.bookRepository.create(bookDto)
+        const data= await this.bookRepository.save(book)
+        console.log(data)
+        return data
     }
     
 
-    updateBook(bookId,bookDto:BookDto){
-        const bookUpdate =this.bookRepository.update({bookId},bookDto)
-        if (bookUpdate){
-            return {
-                success:true,
-                msg:'update thành công'
-            }
-        }
-        else {
-            return {
-                success:false,
-                msg:'update thất bại'
-                
-            }
-        }
+    async updateBook(id,bookDto:BookDto){
+        // const bookUpdate=this.bookRepository.create(bookDto);
         
+        const book= await this.bookRepository.findOneBy({id})
+        if (!book){
+             throw new HttpException("Không tìm thấy sách. Không thể cập nhật",HttpStatus.BAD_REQUEST)
+        }
+        return this.bookRepository.update(id,bookDto)
     }
 
     
-    async deleteBook(bookId){
-        const deleteBook= await this.bookRepository.delete(bookId)
-        if (deleteBook){
-            return {
-                success:true,
-                msg:'Xóa sách thành công'
-            }
+    async deleteBook(id){
+        const book= await this.bookRepository.findOneBy({id})
+        if (!book){
+            console.log('throw')
+            throw new HttpException("Không tìm thấy sách. Không thể Xóa",HttpStatus.BAD_REQUEST)
         }
-        else {
-            return {
-                success:false,
-                msg:'Xóa sách thất bại !!'
-            }
-        }
-        
+        return this.bookRepository.delete(id)
     }
-    async getById(bookId:number){
-        const book=await this.bookRepository.findOne({where:{bookId:bookId}})
+    async   getById(id:number){
+        const book=await this.bookRepository.findOne({where:{id:id}})
         return book;
     }
 
-    async updateImage(imageBuffer: Buffer, filename: string) {
-        const image = await this.imageService.uploadPublicFile(imageBuffer, filename);
-        return image;
-    }
+    // async updateImage(imageBuffer: Buffer, filename: string) {
+    //     const image = await this.imageService.uploadPublicFile(imageBuffer, filename);
+    //     return image;
+    // }
 
-      async addImage(bookId: number, imageBuffer: Buffer, filename: string) {
-        console.log(bookId)
+      async addImage(id: number, imageBuffer: Buffer, filename: string) {
+       
         const image = await this.imageService.uploadPublicFile(imageBuffer, filename);
-        const book = await this.getById(bookId);
-        await this.bookRepository.update(bookId, {
+        const book = await this.getById(id);
+        await this.bookRepository.update(id, {
+          ...book,
+          image
+        });
+        return image;
+      }
+      async update(id: number, imageBuffer: Buffer, filename: string) {
+        const bookfind=this.bookRepository.findOneBy({id})
+        if(!bookfind){
+            throw new HttpException("Không tim thấy sách.Không thể thêm ảnh",HttpStatus.BAD_REQUEST)
+        }
+        const image = await this.imageService.uploadPublicFile(imageBuffer, filename);
+        const book = await this.getById(id);
+        await this.bookRepository.update(id, {
           ...book,
           image
         });
