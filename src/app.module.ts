@@ -24,7 +24,7 @@ dotenv.config();
       username: 'root',
       password: 'b19dcat187',
       database: 'libraly_app',
-      entities: [UserEntity,BookEntity],
+      entities: [UserEntity,BookEntity,ImageEntity],
       synchronize: true
 
       // type: 'mysql',
