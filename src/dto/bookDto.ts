@@ -4,7 +4,7 @@ import { ImageEntity } from "src/image/ImageEntity";
 
 export class BookDto{
     // @IsNotEmpty({message:'bookId không được để trống'})
-    id:number;
+    // id:number;
     @IsNotEmpty({message:'Tiêu đề không được để trống'})
     title:string;
     @IsNotEmpty({message:'Tác giả không được để trống'})

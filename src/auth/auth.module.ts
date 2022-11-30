@@ -8,7 +8,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { UserService } from '../user/user.service';
 import { UserModule } from '../user/user.module';
-import { jwtConstants } from './constains';
+
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { LoginValidateMiddleware } from 'src/middleware/loginValidate.middleware';
 
@@ -17,9 +17,8 @@ import { LoginValidateMiddleware } from 'src/middleware/loginValidate.middleware
     PassportModule,
     UserModule,
     JwtModule.register({
-      secret:jwtConstants.secret,
-      // secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '3600s' },
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: '36000s' },
     }),
   ],
   providers: [AuthService,LocalStrategy,JwtStrategy],

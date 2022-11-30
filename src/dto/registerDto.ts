@@ -17,5 +17,5 @@ export class registerDto{
     @IsNotEmpty()
     email:string;
     // @IsString()
-    role:string
+    // role:string
 }

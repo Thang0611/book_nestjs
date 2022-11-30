@@ -20,18 +20,28 @@ import {
 } from '@nestjs/common/decorators/http/route-params.decorator';
 import { Express } from 'express';
 import { Id } from 'aws-sdk/clients/kinesisanalytics';
+
+import { Role } from 'src/auth/emuns/role.enum';
+import RoleGuard from 'src/auth/guards/role.guard';
+// import RoleGuard from 'src/auth/guards/role.guard';
 @Controller('book')
 export class BookController {
   constructor(private bookService: BookService) {}
+
+  @UseGuards(RoleGuard(Role.Admin))
+  @UseGuards(AuthGuard('jwt'))
   @Get()
   getAllBooks() {
     return this.bookService.getAllBooks();
   }
+
   @UseGuards(AuthGuard('jwt'))
+  @UseGuards(RoleGuard(Role.Admin))
+ 
   @Get('/:id')
   detailBook(@Param() params: { id }) {
-    const data = this.bookService.detailBook(params.id);
-    return data;
+    return this.bookService.detailBook(params.id);
+     
   }
 
   @UseGuards(AuthGuard('jwt'))
@@ -43,12 +53,14 @@ export class BookController {
         return res.status(HttpStatus.OK).json({
           data: data,
           message: 'Thêm sách thành công',
+          success:true
         });
       })
       .catch((err) => {
         return res.status(400).json({
           err,
           message: 'Thêm sách thất bại',
+          success:false
         });
       });
   }
@@ -67,17 +79,22 @@ export class BookController {
       .then((data) => {
         return res.status(HttpStatus.OK).json({
           message: 'Update sách thành công',
+          success:true
         });
       })
       .catch((err) => {
         return res.status(400).json({
           err,
           message: 'Update sách thất bại',
+          success:false
         });
       });
   }
+    @Delete(':id')
+  // @UseGuards(RoleGuard(Role.Admin))
+  // @UseGuards(JwtAuthenticationGuard)
   @UseGuards(AuthGuard('jwt'))
-  @Delete('/:id')
+  // @Delete('/:id')
   async deleteBook(@Param() params: { id: number }, @Res() res) {
     const bookDelete = this.bookService.deleteBook(params.id);
     bookDelete
@@ -102,7 +119,8 @@ export class BookController {
     @Req() request,
     @Param() params: { id },
     @UploadedFile() file: Express.Multer.File,
-  ) {
+  ) 
+  {
     return this.bookService.addImage(params.id, file.buffer, file.originalname);
   }
 

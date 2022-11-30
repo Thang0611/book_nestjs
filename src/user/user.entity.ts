@@ -5,7 +5,7 @@ import { Role } from "src/auth/emuns/role.enum";
 @Entity('users')
 export class UserEntity extends BaseEntity{
     @PrimaryGeneratedColumn()
-    userid: number;
+    id: number;
     @Column()
     username : string;
     @Column()
@@ -14,8 +14,12 @@ export class UserEntity extends BaseEntity{
     fullname:string;
     @Column()
     email:string;
-    @Column({default:"user"})
-        roles: Role;
+    @Column({
+        type: 'enum',
+        enum: Role,
+        default: Role.User
+      })
+      public role: Role
 
     // @BeforeInsert()
     // async hashPassword(){

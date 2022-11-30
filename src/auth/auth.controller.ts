@@ -8,10 +8,11 @@ import { Role } from './emuns/role.enum';
 import { JwtAuthGuard } from './guards/jwt.guard';
 import { LocalAuthGuard } from './guards/local.guard';
 
-import { RolesGuard } from './guards/roles.guard';
+
 import { registerDto } from '../dto/registerDto';
 import { AuthGuard } from '@nestjs/passport';
 import { loginDto } from 'src/dto/loginDto';
+// import RoleGuard from './guards/role.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -39,7 +40,7 @@ export class AuthController {
   home(){
     return 'this is home page'
   }
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  // @UseGuards(AuthGuard('jwt'), RoleGuard)
     // @UseGuards(AuthGuard('jwt'))
   @Roles(Role.User)
   @Get('/user')
@@ -47,7 +48,7 @@ export class AuthController {
     return req.user;
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  // @UseGuards(JwtAuthGuard, RoleGuard)
   @Roles(Role.Admin)
   @Get('/admin')
   getDashboard(@Request() req) {

@@ -11,10 +11,10 @@ export class LoginValidateMiddleware implements NestMiddleware{
         Object.keys(body).forEach((key) => {
             login[key] = body[key];
           });
-
-        Object.keys(body).forEach((key) => {
-            login[key] = body[key];
-        });
+        
+        // Object.keys(body).forEach((key) => {
+        //     login[key] = body[key];
+        // });
         try {
             await validateOrReject(login);
           } catch (errs) {
@@ -28,9 +28,6 @@ export class LoginValidateMiddleware implements NestMiddleware{
           if (errors.length) {
             throw new BadRequestException(errors);
           }
-        // if(!(req.body.username&&req.body.password)){
-        //     throw new HttpException('username và password không được để trống',HttpStatus.BAD_REQUEST)
-        // }
         next();
       }
 }
