@@ -7,10 +7,6 @@ import { Roles } from './decorators/roles.decorator';
 import { Role } from './emuns/role.enum';
 import { JwtAuthGuard } from './guards/jwt.guard';
 import { LocalAuthGuard } from './guards/local.guard';
-
-
-import { registerDto } from '../dto/registerDto';
-import { AuthGuard } from '@nestjs/passport';
 import { loginDto } from 'src/dto/loginDto';
 // import RoleGuard from './guards/role.guard';
 

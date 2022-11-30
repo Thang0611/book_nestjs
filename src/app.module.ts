@@ -18,23 +18,23 @@ dotenv.config();
     UserModule,
     TypeOrmModule.forRoot({
       
-      // type: 'mysql',
-      // host: '',
-      // port: 3306,
-      // username: 'root',
-      // password: 'b19dcat187',
-      // database: 'libraly_app',
-      // entities: [UserEntity,BookEntity],
-      // synchronize: true
-
       type: 'mysql',
       host: process.env.DATABASE_URL,
-      port: 19057,
-      username: process.env.TYPEORM_USERNAME,
-      password: process.env.TYPEORM_PASSWORD,
-      database: process.env.TYPEORM_DATABASE,
-      entities: [UserEntity,BookEntity,ImageEntity],
-      synchronize: true,
+      port: 3306,
+      username: 'root',
+      password: 'b19dcat187',
+      database: 'libraly_app',
+      entities: [UserEntity,BookEntity],
+      synchronize: true
+
+      // type: 'mysql',
+      // host: process.env.DATABASE_URL,
+      // port: 19057,
+      // username: process.env.TYPEORM_USERNAME,
+      // password: process.env.TYPEORM_PASSWORD,
+      // database: process.env.TYPEORM_DATABASE,
+      // entities: [UserEntity,BookEntity,ImageEntity],
+      // synchronize: true,
       
     }),
     BookModule,

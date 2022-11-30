@@ -3,7 +3,7 @@ import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 @Entity('images')
 export class ImageEntity {
   @PrimaryGeneratedColumn()
-  public Id: number;
+  public id: number;
  
   @Column()
   public url: string;

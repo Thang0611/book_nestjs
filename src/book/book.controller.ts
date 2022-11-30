@@ -28,23 +28,22 @@ import RoleGuard from 'src/auth/guards/role.guard';
 export class BookController {
   constructor(private bookService: BookService) {}
 
-  @UseGuards(RoleGuard(Role.Admin))
-  @UseGuards(AuthGuard('jwt'))
+  // @UseGuards(RoleGuard(Role.user))
+  // @UseGuards(AuthGuard('jwt'))
   @Get()
   getAllBooks() {
     return this.bookService.getAllBooks();
   }
 
-  @UseGuards(AuthGuard('jwt'))
-  @UseGuards(RoleGuard(Role.Admin))
+  // @UseGuards(AuthGuard('jwt'))
+  // @UseGuards(RoleGuard(Role.Admin))
  
   @Get('/:id')
   detailBook(@Param() params: { id }) {
     return this.bookService.detailBook(params.id);
-     
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JwtAuthGuard,RoleGuard(Role.Admin))
   @Post()
   addBook(@Body() bookDto: BookDto, @Res() res) {
     const newBook = this.bookService.create(bookDto);
@@ -65,7 +64,7 @@ export class BookController {
       });
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JwtAuthGuard,RoleGuard(Role.Admin))
   @Put('/:id')
   updateBook(
     @Param() params: { id: number },
@@ -93,8 +92,7 @@ export class BookController {
     @Delete(':id')
   // @UseGuards(RoleGuard(Role.Admin))
   // @UseGuards(JwtAuthenticationGuard)
-  @UseGuards(AuthGuard('jwt'))
-  // @Delete('/:id')
+  @UseGuards(JwtAuthGuard,RoleGuard(Role.Admin))
   async deleteBook(@Param() params: { id: number }, @Res() res) {
     const bookDelete = this.bookService.deleteBook(params.id);
     bookDelete
@@ -113,7 +111,7 @@ export class BookController {
       });
   }
   @Put('/image/:id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard,AuthGuard(Role.Admin))
   @UseInterceptors(FileInterceptor('file'))
   async addImage(
     @Req() request,
