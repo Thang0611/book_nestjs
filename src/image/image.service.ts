@@ -44,7 +44,6 @@ export class ImageService {
           async deletePublicFile(id: number) {
             const image = await this.imgRepository.findOne({where:{id}});
             const s3 = new S3();
-            console.log(image)
              await s3.deleteObject({
               Bucket: process.env.AWS_PUBLIC_BUCKET_NAME,
               Key: image.key,

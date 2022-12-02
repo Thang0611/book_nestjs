@@ -101,8 +101,6 @@ export class BookController {
       });
   }
   @Delete('/:id')
-  // @UseGuards(RoleGuard(Role.Admin))
-  // @UseGuards(JwtAuthenticationGuard)
   @UseGuards(JwtAuthGuard, RoleGuard(Role.Admin))
   async deleteBook(@Param() params: { id: number }, @Res() res) {
     const bookDelete = this.bookService.deleteBook(params.id);
@@ -143,5 +141,10 @@ export class BookController {
   async addImage(@Req() request, @UploadedFile() file: Express.Multer.File) {
     const book = this.bookService.addImage(file.buffer, file.originalname);
     return book;
+  }
+  @Delete('/image/:id')
+  @UseGuards(JwtAuthGuard, RoleGuard(Role.Admin))
+  deleteImage(@Param() params:{id}){
+    return this.bookService.deleteImage(params.id)
   }
 }

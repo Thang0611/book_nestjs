@@ -25,36 +25,42 @@ export class BookService {
         // if (!bookDto.urlImage) bookDto.urlImage=''
         // addImage(bookDto?.image)
         const book= await this.bookRepository.create(bookDto)
+        const image= await this.addImage(imageBuffer, imageName)
+        book.image=image;
         console.log(book)
         const data= await this.bookRepository.save(book)
-        const img= this.updateImage(book.id,imageBuffer, imageName)
-        console.log(data)
         return data
     }
     
 
-    async updateBook(id,bookDto:BookDto,imageBuffer,imageName){
-        // const bookUpdate=this.bookRepository.create(bookDto);
-        
+    async updateBook(id,bookDto:BookDto,imageBuffer:Buffer,imageName:string){
         const book= await this.bookRepository.findOneBy({id})
+        const imageId=book?.image.id;
         if (!book){
              throw new HttpException("Không tìm thấy sách. Không thể cập nhật",HttpStatus.BAD_REQUEST)
         }
-        await this.updateImage(id, imageBuffer, imageName)
+        // const bookUpdate=this.bookRepository.create(bookDto)
+        if ((imageBuffer&&imageName)){
+            await this.updateImage(id, imageBuffer, imageName)
+            await this.imageService.deleteImg(imageId)
+            return this.bookRepository.update(id,bookDto)
+        }
         return this.bookRepository.update(id,bookDto)
+
+
     }
 
     
     async deleteBook(id){
         const book= await this.bookRepository.findOneBy({id})
         console.log(book)
-        const imageId=book.image?.id
+        const imageId=book?.image?.id
         console.log(imageId)
         if (!book){
             console.log('throw')
             throw new HttpException("Không tìm thấy sách. Không thể Xóa",HttpStatus.BAD_REQUEST)
         }
-        const bookDeleted=this.bookRepository.delete(id)
+        const bookDeleted=await this.bookRepository.delete(id)
         await this.imageService.deletePublicFile(imageId)
         return bookDeleted
     }
@@ -70,6 +76,7 @@ export class BookService {
 
       async updateImage(id: number, imageBuffer: Buffer, filename: string) {
         const book = await this.getById(id);
+        const imageId=book?.image.id;
         if(!book){
             throw new HttpException("Không tim thấy sách.Không thể thêm ảnh",HttpStatus.BAD_REQUEST)
         }
@@ -79,9 +86,16 @@ export class BookService {
           ...book,
           image
         });
+        if (imageId){
+            this.imageService.deleteImg(imageId)
+        }
         return image;
       }
-
+        deleteImage(imageId){
+            if (imageId){
+                this.imageService.deleteImg(imageId)
+            }
+        }
     //   async deleteImage(id: number) {
     //     // console.log(book)
     //     // const imageId = book.image?.id;
