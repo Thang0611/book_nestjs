@@ -24,6 +24,7 @@ import { Id } from 'aws-sdk/clients/kinesisanalytics';
 import { Role } from 'src/auth/emuns/role.enum';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import RoleGuard from 'src/auth/guards/role.guard';
+import { HttpException } from '@nestjs/common';
 // import { ImageService } from '../oder/cart/image/image.service';
 // import RoleGuard from 'src/auth/guards/role.guard';
 // import RoleGuard from 'src/auth/guards/role.guard';
@@ -49,8 +50,12 @@ export class BookController {
   @UseGuards(JwtAuthGuard, RoleGuard(Role.Admin))
   // @Roles(Role.Admin)
   @Post()
-  addBook(@Body() bookDto: BookDto, @Res() res) {
-    const newBook = this.bookService.create(bookDto);
+  @UseInterceptors(FileInterceptor('image'))
+  addBook(@Body() bookDto: BookDto, @Res() res, @UploadedFile() image: Express.Multer.File,) {
+    if(!image){
+      throw new HttpException("Ảnh không được để trống",HttpStatus.BAD_REQUEST)
+    }
+    const newBook = this.bookService.create(bookDto,image.buffer, image.originalname);
     newBook
       .then((data) => {
         return res.status(HttpStatus.OK).json({
@@ -70,12 +75,14 @@ export class BookController {
 
   @UseGuards(JwtAuthGuard, RoleGuard(Role.Admin))
   @Put('/:id')
+  @UseInterceptors(FileInterceptor('image'))
   updateBook(
     @Param() params: { id: number },
     @Body() bookDto: BookDto,
     @Res() res,
+    @UploadedFile() image: Express.Multer.File,
   ) {
-    const book = this.bookService.updateBook(params.id, bookDto);
+    const book = this.bookService.updateBook(params.id, bookDto,image.buffer,image.originalname);
     console.log(book);
     console.log(0);
     book

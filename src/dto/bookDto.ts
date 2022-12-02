@@ -15,13 +15,13 @@ export class BookDto{
     @IsDate()
     @IsNotEmpty({message:'Ngày xuất bản không được để trống'})
     date:Date;
-    @IsPositive({message:'Số trang phải là số dương'})
-    @IsNotEmpty({message:'Số trang không được để trống'})
+    // @IsPositive({message:'Số trang phải là số dương'})
+    // @IsNotEmpty({message:'Số trang không được để trống'})
     numOfPage:number;
     @IsNotEmpty({message:'Mô tả không được để trống'})
     decription:string;
-    @IsNotEmpty({message:'Số lượng không được để trống'})
-    @IsPositive({message:'Số trang phải là số dương'})
+    // @IsNotEmpty({message:'Số lượng không được để trống'})
+    // @IsPositive({message:'Số trang phải là số dương'})
     amount:number;
     // @IsNotEmpty()
     // urlImage:string;

@@ -21,22 +21,26 @@ export class BookService {
     }
 
 
-    async create(bookDto:BookDto):Promise<BookEntity>{
+    async create(bookDto:BookDto,imageBuffer:Buffer, imageName:string):Promise<BookEntity>{
         // if (!bookDto.urlImage) bookDto.urlImage=''
+        // addImage(bookDto?.image)
         const book= await this.bookRepository.create(bookDto)
+        console.log(book)
         const data= await this.bookRepository.save(book)
+        const img= this.updateImage(book.id,imageBuffer, imageName)
         console.log(data)
         return data
     }
     
 
-    async updateBook(id,bookDto:BookDto){
+    async updateBook(id,bookDto:BookDto,imageBuffer,imageName){
         // const bookUpdate=this.bookRepository.create(bookDto);
         
         const book= await this.bookRepository.findOneBy({id})
         if (!book){
              throw new HttpException("Không tìm thấy sách. Không thể cập nhật",HttpStatus.BAD_REQUEST)
         }
+        await this.updateImage(id, imageBuffer, imageName)
         return this.bookRepository.update(id,bookDto)
     }
 
@@ -53,31 +57,17 @@ export class BookService {
         const bookDeleted=this.bookRepository.delete(id)
         await this.imageService.deletePublicFile(imageId)
         return bookDeleted
-        // this.bookRepository.delete(id)
-        // .then(
-        //     async (data)=>{
-        //         await this.imageService.deletePublicFile(imageId)
-        //         return data
-        //     }
-        // )
-        // .catch(err=>{
-        //     console.log(err)
-        // })
     }
     async getById(id:number){
         const book=await this.bookRepository.findOne({where:{id:id}})
         return book;
     }
 
-    // async updateImage(imageBuffer: Buffer, filename: string) {
-    //     const image = await this.imageService.uploadPublicFile(imageBuffer, filename);
-    //     return image;
-    // }
-
       async addImage( imageBuffer: Buffer, filename: string) {
         const image = await this.imageService.uploadPublicFile(imageBuffer, filename);
         return image;
       }
+
       async updateImage(id: number, imageBuffer: Buffer, filename: string) {
         const book = await this.getById(id);
         if(!book){
