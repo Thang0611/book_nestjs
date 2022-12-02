@@ -12,9 +12,6 @@ export class LoginValidateMiddleware implements NestMiddleware{
             login[key] = body[key];
           });
         
-        // Object.keys(body).forEach((key) => {
-        //     login[key] = body[key];
-        // });
         try {
             await validateOrReject(login);
           } catch (errs) {

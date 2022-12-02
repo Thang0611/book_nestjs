@@ -20,6 +20,7 @@ export class UserEntity extends BaseEntity{
         default: Role.User
       })
       public role: Role
+      // roles: Role[];
 
     // @BeforeInsert()
     // async hashPassword(){

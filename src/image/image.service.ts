@@ -17,7 +17,7 @@ export class ImageService {
     
     constructor(
         @InjectRepository(ImageEntity)
-        private readonly imgRepository: Repository<ImageEntity>,)
+        private readonly  imgRepository: Repository<ImageEntity>,)
         // private readonly configService: ConfigService)
         {}
     
@@ -41,7 +41,22 @@ export class ImageService {
             await this.imgRepository.save(newFile);
             return newFile;
           }
+          async deletePublicFile(id: number) {
+            const image = await this.imgRepository.findOne({where:{id}});
+            const s3 = new S3();
+            console.log(image)
+             await s3.deleteObject({
+              Bucket: process.env.AWS_PUBLIC_BUCKET_NAME,
+              Key: image.key,
+            }).promise().catch(err=>{
+              console.log('xoa sách trong cloud s3 aws thất bại')
+            });
+            await this.imgRepository.delete(id);
+          }
 
+          async deleteImg(id:number){
+            return this.imgRepository.delete(id)
+          } 
 
     // async uploadFile(dataBuffer: Buffer, fileName: string) {
     //     const s3 = new S3();

@@ -3,7 +3,6 @@ import { BookEntity } from './book.entity';
 import { Repository } from 'typeorm';
 import {InjectRepository} from '@nestjs/typeorm'
 import { BookDto } from '../dto/bookDto';
-import { ImageEntity } from 'src/image/ImageEntity';
 import { ImageService } from 'src/image/image.service';
 @Injectable()
 export class BookService {
@@ -18,7 +17,7 @@ export class BookService {
         return await this.bookRepository.find()
     }
     async detailBook(id){
-        return await this.bookRepository.findOne({where:{id}})
+        return await this.getById(id)
     }
 
 
@@ -44,13 +43,28 @@ export class BookService {
     
     async deleteBook(id){
         const book= await this.bookRepository.findOneBy({id})
+        console.log(book)
+        const imageId=book.image?.id
+        console.log(imageId)
         if (!book){
             console.log('throw')
             throw new HttpException("Không tìm thấy sách. Không thể Xóa",HttpStatus.BAD_REQUEST)
         }
-        return this.bookRepository.delete(id)
+        const bookDeleted=this.bookRepository.delete(id)
+        await this.imageService.deletePublicFile(imageId)
+        return bookDeleted
+        // this.bookRepository.delete(id)
+        // .then(
+        //     async (data)=>{
+        //         await this.imageService.deletePublicFile(imageId)
+        //         return data
+        //     }
+        // )
+        // .catch(err=>{
+        //     console.log(err)
+        // })
     }
-    async   getById(id:number){
+    async getById(id:number){
         const book=await this.bookRepository.findOne({where:{id:id}})
         return book;
     }
@@ -60,27 +74,36 @@ export class BookService {
     //     return image;
     // }
 
-      async addImage(id: number, imageBuffer: Buffer, filename: string) {
-       
+      async addImage( imageBuffer: Buffer, filename: string) {
         const image = await this.imageService.uploadPublicFile(imageBuffer, filename);
-        const book = await this.getById(id);
-        await this.bookRepository.update(id, {
-          ...book,
-          image
-        });
         return image;
       }
-      async update(id: number, imageBuffer: Buffer, filename: string) {
-        const bookfind=this.bookRepository.findOneBy({id})
-        if(!bookfind){
+      async updateImage(id: number, imageBuffer: Buffer, filename: string) {
+        const book = await this.getById(id);
+        if(!book){
             throw new HttpException("Không tim thấy sách.Không thể thêm ảnh",HttpStatus.BAD_REQUEST)
         }
         const image = await this.imageService.uploadPublicFile(imageBuffer, filename);
-        const book = await this.getById(id);
+        // const book = await this.getById(id);
         await this.bookRepository.update(id, {
           ...book,
           image
         });
         return image;
       }
+
+    //   async deleteImage(id: number) {
+    //     // console.log(book)
+    //     // const imageId = book.image?.id;
+    //     // console.log(imageId)
+    //     // if (imageId) {
+    //     // await this.bookRepository.update(id, {
+    //     //     ...book,
+    //     //     image: null
+    //     // });
+    //     // console.log(imageId)
+    //     await this.imageService.deletePublicFile(id)
+    //     // await this.imageService.deleteImg(id)
+    //     }
+  
 }

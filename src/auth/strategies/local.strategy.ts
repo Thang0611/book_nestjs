@@ -10,12 +10,12 @@ export class LocalStrategy extends PassportStrategy(Strategy){
     }
     async validate(username:string,password:string){
         if(!(username&&password)){
-            throw new HttpException('Không được để trống thông tin',HttpStatus.BAD_REQUEST)
+            throw new HttpException(['Không được để trống thông tin'],HttpStatus.BAD_REQUEST)
         }
         const user=await this.authService.validateUser(username,password)
         if (!user){
             console.log(3)
-            throw new UnauthorizedException('Đăng nhập thất bại');
+            throw new UnauthorizedException(['Đăng nhập thất bại']);
         }
         console.log(0)
         return user

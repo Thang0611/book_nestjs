@@ -6,20 +6,26 @@ import { UserEntity } from './user/user.entity';
 import { BookModule } from './book/book.module';
 import { BookEntity } from './book/book.entity';
 import { AuthModule } from './auth/auth.module';
-import { ImageModule } from './image/image.module';
+
 import * as dotenv from 'dotenv';
-import { ImageEntity } from './image/ImageEntity';
+
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { APP_GUARD } from '@nestjs/core';
+import { CartModule } from './oder/cart/cart.module';
+import { LineItemModule } from './oder/line-item/line-item.module';
+import RoleGuard from './auth/guards/role.guard';
+import { ImageEntity } from './image/ImageEntity';
+import { ImageModule } from './image/image.module';
+
 dotenv.config();
 
 @Module({
   imports: [
-    // ConfigService,
     UserModule,
     TypeOrmModule.forRoot({
       
       type: 'mysql',
-      host: process.env.DATABASE_URL,
+      host: '127.0.0.1',
       port: 3306,
       username: 'root',
       password: 'b19dcat187',
@@ -40,9 +46,16 @@ dotenv.config();
     BookModule,
     AuthModule,
     ImageModule,
+    CartModule,
+    LineItemModule,
   ],
     controllers: [AppController],
-    providers: [AppService],
+    providers: [AppService,
+    //   {
+    //   provide: APP_GUARD,
+    //   useClass: RoleGuard,
+    // },
+    ],
   })
   
 export class AppModule {

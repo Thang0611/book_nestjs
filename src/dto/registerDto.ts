@@ -2,19 +2,19 @@ import { IsEmail, IsNotEmpty, IsString, } from "class-validator";
 
 export class registerDto{
 
-    @IsNotEmpty()
+    @IsNotEmpty({message:'Username không được để trống '})
     username : string;
 
-    @IsNotEmpty()
+    @IsNotEmpty({message:'Password không được để trống '})
     password:string;
 
-    @IsNotEmpty()
+    @IsNotEmpty({message:'Nhập lại Password không được để trống '})
     passwordcf:string;
 
-    @IsNotEmpty()
+    @IsNotEmpty({message:'Username không được để trống '})
     fullname:string;
     @IsEmail()
-    @IsNotEmpty()
+    @IsNotEmpty({message:'Username không được để trống '})
     email:string;
     // @IsString()
     // role:string
