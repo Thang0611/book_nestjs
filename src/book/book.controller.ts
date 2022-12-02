@@ -51,11 +51,22 @@ export class BookController {
   // @Roles(Role.Admin)
   @Post()
   @UseInterceptors(FileInterceptor('image'))
-  addBook(@Body() bookDto: BookDto, @Res() res, @UploadedFile() image: Express.Multer.File,) {
-    if(!image){
-      throw new HttpException("Ảnh không được để trống",HttpStatus.BAD_REQUEST)
+  addBook(
+    @Body() bookDto: BookDto,
+    @Res() res,
+    @UploadedFile() image: Express.Multer.File,
+  ) {
+    if (!image) {
+      throw new HttpException(
+        'Ảnh không được để trống',
+        HttpStatus.BAD_REQUEST,
+      );
     }
-    const newBook = this.bookService.create(bookDto,image.buffer, image.originalname);
+    const newBook = this.bookService.create(
+      bookDto,
+      image.buffer,
+      image.originalname,
+    );
     newBook
       .then((data) => {
         return res.status(HttpStatus.OK).json({
@@ -82,9 +93,30 @@ export class BookController {
     @Res() res,
     @UploadedFile() image: Express.Multer.File,
   ) {
-    const book = this.bookService.updateBook(params.id, bookDto,image.buffer,image.originalname);
-    console.log(book);
-    console.log(0);
+    if (image) {
+      const book = this.bookService.updateBookAndImage(
+        params.id,
+        bookDto,  
+        image.buffer,
+        image.originalname,
+      );
+      book
+      .then((data) => {
+        return res.status(HttpStatus.OK).json({
+          message: 'Update sách thành công',
+          success: true,
+        });
+      })
+      .catch((err) => {
+        return res.status(400).json({
+          err,
+          message: 'Update sách thất bại',
+          success: false,
+        });
+      });
+    }
+    else {
+      const book=this.bookService.updateBook(params.id, bookDto)
     book
       .then((data) => {
         return res.status(HttpStatus.OK).json({
@@ -99,6 +131,7 @@ export class BookController {
           success: false,
         });
       });
+    }
   }
   @Delete('/:id')
   @UseGuards(JwtAuthGuard, RoleGuard(Role.Admin))
@@ -106,7 +139,6 @@ export class BookController {
     const bookDelete = this.bookService.deleteBook(params.id);
     bookDelete
       .then((data) => {
-        
         console.log(data);
         return res.status(HttpStatus.OK).json({
           data,
@@ -144,7 +176,7 @@ export class BookController {
   }
   @Delete('/image/:id')
   @UseGuards(JwtAuthGuard, RoleGuard(Role.Admin))
-  deleteImage(@Param() params:{id}){
-    return this.bookService.deleteImage(params.id)
+  deleteImage(@Param() params: { id }) {
+    return this.bookService.deleteImage(params.id);
   }
 }

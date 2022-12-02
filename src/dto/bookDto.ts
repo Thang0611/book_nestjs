@@ -21,7 +21,7 @@ export class BookDto{
     @IsNotEmpty({message:'Mô tả không được để trống'})
     decription:string;
     // @IsNotEmpty({message:'Số lượng không được để trống'})
-    // @IsPositive({message:'Số trang phải là số dương'})
+    // @IsPositive({message:'Số lượng phải là số dương'})
     amount:number;
     // @IsNotEmpty()
     // urlImage:string;

@@ -41,6 +41,8 @@ export class ImageService {
             await this.imgRepository.save(newFile);
             return newFile;
           }
+
+          
           async deletePublicFile(id: number) {
             const image = await this.imgRepository.findOne({where:{id}});
             const s3 = new S3();

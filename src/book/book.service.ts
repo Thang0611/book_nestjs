@@ -33,7 +33,7 @@ export class BookService {
     }
     
 
-    async updateBook(id,bookDto:BookDto,imageBuffer:Buffer,imageName:string){
+    async updateBookAndImage (id,bookDto:BookDto,imageBuffer:Buffer,imageName:string){
         const book= await this.bookRepository.findOneBy({id})
         const imageId=book?.image.id;
         if (!book){
@@ -42,8 +42,19 @@ export class BookService {
         // const bookUpdate=this.bookRepository.create(bookDto)
         if ((imageBuffer&&imageName)){
             await this.updateImage(id, imageBuffer, imageName)
-            await this.imageService.deleteImg(imageId)
+            // await this.imageService.deleteImg(imageId)
             return this.bookRepository.update(id,bookDto)
+        }
+        return this.bookRepository.update(id,bookDto)
+
+
+    }
+
+    async updateBook (id,bookDto:BookDto){
+        const book= await this.bookRepository.findOneBy({id})
+        const bookUpdate=this.bookRepository.create(book)
+        if (!book){
+             throw new HttpException("Không tìm thấy sách. Không thể cập nhật",HttpStatus.BAD_REQUEST)
         }
         return this.bookRepository.update(id,bookDto)
 
@@ -81,7 +92,6 @@ export class BookService {
             throw new HttpException("Không tim thấy sách.Không thể thêm ảnh",HttpStatus.BAD_REQUEST)
         }
         const image = await this.imageService.uploadPublicFile(imageBuffer, filename);
-        // const book = await this.getById(id);
         await this.bookRepository.update(id, {
           ...book,
           image
@@ -91,6 +101,9 @@ export class BookService {
         }
         return image;
       }
+
+
+
         deleteImage(imageId){
             if (imageId){
                 this.imageService.deleteImg(imageId)
