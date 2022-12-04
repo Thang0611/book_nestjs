@@ -1,30 +1,37 @@
-import { Injectable, HttpException, HttpStatus, BadRequestException } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus, BadRequestException, NotFoundException } from '@nestjs/common';
 import { BookEntity } from './book.entity';
 import { Repository } from 'typeorm';
 import {InjectRepository} from '@nestjs/typeorm'
 import { BookDto } from '../dto/bookDto';
 import { ImageService } from 'src/image/image.service';
+import { EvaluateService } from '../evaluate/evaluate.service';
+import {EvaluateEntity } from 'src/evaluate/evaluate.entity';
+import { AddEvaluateDto } from '../dto/addEvaluateDto';
+import { throws } from 'assert';
+import { timeStamp } from 'console';
 @Injectable()
 export class BookService {
     constructor(
         @InjectRepository(BookEntity)
         private bookRepository:Repository<BookEntity>,
-        private imageService:ImageService
+        private imageService:ImageService,
+        private evaluateService:EvaluateService
     ){}
 
 
     async getAllBooks(){
-        return await this.bookRepository.find()
+        const book= await this.bookRepository.find()
+        console.log(book)
+        return book
     }
     async detailBook(id){
         return await this.getById(id)
     }
 
 
-    async create(bookDto:BookDto,imageBuffer:Buffer, imageName:string):Promise<BookEntity>{
-        // if (!bookDto.urlImage) bookDto.urlImage=''
-        // addImage(bookDto?.image)
+    async create(bookDto:BookDto,imageBuffer:Buffer, imageName:string){
         const book= await this.bookRepository.create(bookDto)
+        // const data= await this.bookRepository.save(book)
         const image= await this.addImage(imageBuffer, imageName)
         book.image=image;
         console.log(book)
@@ -35,14 +42,12 @@ export class BookService {
 
     async updateBookAndImage (id,bookDto:BookDto,imageBuffer:Buffer,imageName:string){
         const book= await this.bookRepository.findOneBy({id})
-        const imageId=book?.image.id;
         if (!book){
              throw new HttpException("Không tìm thấy sách. Không thể cập nhật",HttpStatus.BAD_REQUEST)
         }
         // const bookUpdate=this.bookRepository.create(bookDto)
         if ((imageBuffer&&imageName)){
             await this.updateImage(id, imageBuffer, imageName)
-            // await this.imageService.deleteImg(imageId)
             return this.bookRepository.update(id,bookDto)
         }
         return this.bookRepository.update(id,bookDto)
@@ -52,7 +57,6 @@ export class BookService {
 
     async updateBook (id,bookDto:BookDto){
         const book= await this.bookRepository.findOneBy({id})
-        const bookUpdate=this.bookRepository.create(book)
         if (!book){
              throw new HttpException("Không tìm thấy sách. Không thể cập nhật",HttpStatus.BAD_REQUEST)
         }
@@ -80,7 +84,7 @@ export class BookService {
         return book;
     }
 
-      async addImage( imageBuffer: Buffer, filename: string) {
+      async addImage(imageBuffer: Buffer, filename: string) {
         const image = await this.imageService.uploadPublicFile(imageBuffer, filename);
         return image;
       }
@@ -94,7 +98,7 @@ export class BookService {
         const image = await this.imageService.uploadPublicFile(imageBuffer, filename);
         await this.bookRepository.update(id, {
           ...book,
-          image
+          image 
         });
         if (imageId){
             this.imageService.deleteImg(imageId)
@@ -109,6 +113,19 @@ export class BookService {
                 this.imageService.deleteImg(imageId)
             }
         }
+
+
+        async addEvaluate(id:number,evaluate:AddEvaluateDto){
+            const book=await this.getById(id);
+            const bookid=book.id
+            if (!book){
+                throw new NotFoundException("Khong tim thay sach.Khong the danh gia")
+            }
+            const newEvaluate= await this.evaluateService.createEvaluate(book,evaluate)
+            // book.evaluates.push(newEvaluate)
+            return  newEvaluate
+        }
+
     //   async deleteImage(id: number) {
     //     // console.log(book)
     //     // const imageId = book.image?.id;

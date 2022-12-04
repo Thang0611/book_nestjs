@@ -6,7 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ImageEntity } from './ImageEntity';
 
 @Module({
-  imports:[TypeOrmModule.forFeature([ImageEntity]),ConfigService],
+  imports:[TypeOrmModule.forFeature([ImageEntity])],
   providers: [ImageService],
   controllers: [ImageController,],
   exports:[ImageService]

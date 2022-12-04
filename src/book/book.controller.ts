@@ -24,6 +24,7 @@ import { Id } from 'aws-sdk/clients/kinesisanalytics';
 import { Role } from 'src/auth/emuns/role.enum';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import RoleGuard from 'src/auth/guards/role.guard';
+import { AddEvaluateDto } from '../dto/addEvaluateDto';
 import { HttpException } from '@nestjs/common';
 // import { ImageService } from '../oder/cart/image/image.service';
 // import RoleGuard from 'src/auth/guards/role.guard';
@@ -56,6 +57,7 @@ export class BookController {
     @Res() res,
     @UploadedFile() image: Express.Multer.File,
   ) {
+    console.log(bookDto+'____ '+image)
     if (!image) {
       throw new HttpException(
         'Ảnh không được để trống',
@@ -167,16 +169,38 @@ export class BookController {
     );
   }
 
-  @Post('/image')
-  @UseGuards(JwtAuthGuard, RoleGuard(Role.Admin))
-  @UseInterceptors(FileInterceptor('image'))
-  async addImage(@Req() request, @UploadedFile() file: Express.Multer.File) {
-    const book = this.bookService.addImage(file.buffer, file.originalname);
-    return book;
-  }
+  // @Post('/image')
+  // @UseGuards(JwtAuthGuard, RoleGuard(Role.Admin))
+  // @UseInterceptors(FileInterceptor('image'))
+  // async addImage(@Req() request, @UploadedFile() file: Express.Multer.File) {
+  //   const book = this.bookService.addImage(file.buffer, file.originalname);
+  //   return book;
+  // }
   @Delete('/image/:id')
   @UseGuards(JwtAuthGuard, RoleGuard(Role.Admin))
   deleteImage(@Param() params: { id }) {
     return this.bookService.deleteImage(params.id);
   }
+
+  @Post('/evaluate/:id')
+  @UseGuards(JwtAuthGuard, RoleGuard(Role.User))
+  addEvaluate(@Param() param:{id},@Res() res ,@Body() evaluate:AddEvaluateDto){
+    const newEvaluate = this.bookService.addEvaluate(param.id,evaluate);
+    console.log('123')
+    newEvaluate
+    .then((data) => {
+      return res.status(HttpStatus.OK).json({
+        data,
+        message: 'Add Evaluate thành công',
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      return res.status(400).json({
+        err,
+        message: 'add Evaluate that bai',
+      });
+    });
+  }
+
 }

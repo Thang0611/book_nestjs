@@ -36,7 +36,7 @@ export class ImageService {
          
             const newFile = this.imgRepository.create({
               key: uploadResult.Key,
-              url: uploadResult.Location
+              url: uploadResult.Location,
             });
             await this.imgRepository.save(newFile);
             return newFile;
@@ -50,7 +50,7 @@ export class ImageService {
               Bucket: process.env.AWS_PUBLIC_BUCKET_NAME,
               Key: image.key,
             }).promise().catch(err=>{
-              console.log('xoa sách trong cloud s3 aws thất bại')
+              console.log('Xóa sách trong cloud s3 aws thất bại')
             });
             await this.imgRepository.delete(id);
           }

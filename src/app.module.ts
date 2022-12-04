@@ -16,6 +16,9 @@ import { LineItemModule } from './oder/line-item/line-item.module';
 import RoleGuard from './auth/guards/role.guard';
 import { ImageEntity } from './image/ImageEntity';
 import { ImageModule } from './image/image.module';
+import { EvaluateModule } from './evaluate/evaluate.module';
+import { EvaluateEntity } from './evaluate/evaluate.entity';
+
 
 
 dotenv.config();
@@ -31,7 +34,7 @@ dotenv.config();
       username: 'root',
       password: 'b19dcat187',
       database: 'libraly_app',
-      entities: [UserEntity,BookEntity,ImageEntity],
+      entities: [UserEntity,BookEntity,ImageEntity,EvaluateEntity],
       synchronize: true
 
       // type: 'mysql',
@@ -49,6 +52,7 @@ dotenv.config();
     ImageModule,
     CartModule,
     LineItemModule,
+    EvaluateModule,
   ],
     controllers: [AppController],
     providers: [AppService,
