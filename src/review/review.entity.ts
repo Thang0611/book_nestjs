@@ -2,8 +2,8 @@ import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColu
 import { BookEntity } from '../book/book.entity';
 import { UserEntity } from '../user/user.entity';
 
-@Entity("evaluate")
-export class EvaluateEntity extends BaseEntity{
+@Entity("reviews")
+export class ReviewEntity extends BaseEntity{
     @PrimaryGeneratedColumn("uuid")
     id:number;
     @Column()
@@ -25,7 +25,7 @@ export class EvaluateEntity extends BaseEntity{
     @JoinColumn()
     @ManyToOne(
         ()=>BookEntity,
-        (book)=>book.evaluates,
+        (book)=>book.reviews,
         {onDelete:"SET NULL"}
     )
     book:BookEntity;

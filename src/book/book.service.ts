@@ -4,18 +4,17 @@ import { Repository } from 'typeorm';
 import {InjectRepository} from '@nestjs/typeorm'
 import { BookDto } from '../dto/bookDto';
 import { ImageService } from 'src/image/image.service';
-import { EvaluateService } from '../evaluate/evaluate.service';
-import {EvaluateEntity } from 'src/evaluate/evaluate.entity';
-import { AddEvaluateDto } from '../dto/addEvaluateDto';
 import { throws } from 'assert';
 import { timeStamp } from 'console';
+import { AddReviewDto } from '../dto/addReviewDto';
+import { ReviewService } from '../review/review.service';
 @Injectable()
 export class BookService {
     constructor(
         @InjectRepository(BookEntity)
         private bookRepository:Repository<BookEntity>,
         private imageService:ImageService,
-        private evaluateService:EvaluateService
+        private evaluateService:ReviewService
     ){}
 
 
@@ -115,15 +114,14 @@ export class BookService {
         }
 
 
-        async addEvaluate(id:number,evaluate:AddEvaluateDto){
+        async addReview(id:number,evaluate:AddReviewDto){
             const book=await this.getById(id);
             const bookid=book.id
             if (!book){
                 throw new NotFoundException("Khong tim thay sach.Khong the danh gia")
             }
-            const newEvaluate= await this.evaluateService.createEvaluate(book,evaluate)
-            // book.evaluates.push(newEvaluate)
-            return  newEvaluate
+            const newReview= await this.evaluateService.createReview(book,evaluate)
+            return  newReview
         }
 
     //   async deleteImage(id: number) {

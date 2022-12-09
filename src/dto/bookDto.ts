@@ -1,10 +1,8 @@
 import {  Type } from "class-transformer";
-import { IsDate, IsNotEmpty, IsPositive } from "class-validator";
+import { IsDate, IsNotEmpty, IsPositive, IsString } from "class-validator";
 import { ImageEntity } from "src/image/ImageEntity";
 
 export class BookDto{
-    // @IsNotEmpty({message:'bookId không được để trống'})
-    // id:number;
     @IsNotEmpty({message:'Tiêu đề không được để trống'})
     title:string;
     @IsNotEmpty({message:'Tác giả không được để trống'})
@@ -12,19 +10,16 @@ export class BookDto{
     @IsNotEmpty({message:'Thể loại không được để trống'})
     category:string;
     @Type(() => Date)
-    @IsDate()
+    @IsDate({message:'Ngày sai định dạng'})
     @IsNotEmpty({message:'Ngày xuất bản không được để trống'})
     date:Date;
     // @IsPositive({message:'Số trang phải là số dương'})
-    // @IsNotEmpty({message:'Số trang không được để trống'})
+    @IsNotEmpty({message:'Số trang không được để trống'})
     numOfPage:number;
     @IsNotEmpty({message:'Mô tả không được để trống'})
     decription:string;
-    // @IsNotEmpty({message:'Số lượng không được để trống'})
-    // @IsPositive({message:'Số lượng phải là số dương'})
+    @IsNotEmpty({message:'Số lượng không được để trống'})
     amount:number;
-    // @IsNotEmpty()
-    // urlImage:string;
     image?: ImageEntity
 }
 

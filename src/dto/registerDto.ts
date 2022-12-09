@@ -11,10 +11,10 @@ export class registerDto{
     @IsNotEmpty({message:'Nhập lại Password không được để trống '})
     passwordcf:string;
 
-    @IsNotEmpty({message:'Username không được để trống '})
+    @IsNotEmpty({message:'Fullname không được để trống '})
     fullname:string;
     @IsEmail()
-    @IsNotEmpty({message:'Username không được để trống '})
+    @IsNotEmpty({message:'Email không được để trống '})
     email:string;
     // @IsString()
     // role:string

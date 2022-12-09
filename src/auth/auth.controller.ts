@@ -1,4 +1,4 @@
-import { Controller, Request, Get, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Request, Get, Post, Body, UseGuards, Res, HttpStatus } from '@nestjs/common';
 
 import { UserService } from 'src/user/user.service';
 import { AuthService } from './auth.service';
@@ -24,9 +24,15 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('/login')
-  async login(@Request() req,@Body() loginDto: loginDto) {
+  async login(@Request() req,@Body() loginDto: loginDto ,@Res() res) {
     console.log('end')
-    return this.authService.login(req.user);
+    const data= await this.authService.login(req.user)
+    return res.status(HttpStatus.OK).json(
+      {
+        ...data,
+        message:'Đăng nhập thành công'
+      }
+    );
   }
 
 

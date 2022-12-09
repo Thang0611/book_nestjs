@@ -1,4 +1,4 @@
-import { Controller,Post,Body } from '@nestjs/common';
+import { Controller, Post, Body, Res, HttpStatus } from '@nestjs/common';
 import { registerDto } from 'src/dto/registerDto';
 import { UserService } from './user.service';
 
@@ -6,9 +6,13 @@ import { UserService } from './user.service';
 export class UserController {
     constructor(private UserService:UserService){}
       @Post('/register')
-    async register(@Body() registerDto: registerDto) {
+    async register(@Body() registerDto: registerDto,@Res() res) {
     const user = await this.UserService.addUser(registerDto);
     console.log(user)
-    return user;
+    return res.status(HttpStatus.OK).json({
+      user,
+      message:'Đăng kí thành công'
+    }
+    )
   }
 }

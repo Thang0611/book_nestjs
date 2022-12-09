@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { LineItemService } from './line-item.service';
-import { LineItemController } from './line-item.controller';
+import { LineItemService } from './lineItem.service';
+import { LineItemController } from './lineItem.controller';
 
 @Module({
   providers: [LineItemService],

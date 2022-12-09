@@ -8,8 +8,18 @@ dotenv.config()
 // import { NextFunction, Request, Response } from 'express';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule,{cors:true,});
-  app.useGlobalPipes(new ValidationPipe({transform: true}));
-  // app.useGlobalPipes(new ValidationPipe({exceptionFactory: (errors) => new BadRequestException(errors),}));
+  // app.useGlobalPipes(new ValidationPipe({transform: true}));
+  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(
+    new ValidationPipe({
+      validateCustomDecorators: true,
+      transform: true,
+      skipUndefinedProperties: true, // when activated, it works, but does not validate
+      enableDebugMessages: true,
+      transformOptions: { enableImplicitConversion: true },
+    }),
+  );
+  app.useGlobalPipes(new ValidationPipe({exceptionFactory: (errors) => new BadRequestException(errors),}));
   console.log(process.env.PORT)
   await app.listen(process.env.PORT);
   app.enableCors();

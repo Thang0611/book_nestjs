@@ -24,8 +24,8 @@ import { Id } from 'aws-sdk/clients/kinesisanalytics';
 import { Role } from 'src/auth/emuns/role.enum';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import RoleGuard from 'src/auth/guards/role.guard';
-import { AddEvaluateDto } from '../dto/addEvaluateDto';
 import { HttpException } from '@nestjs/common';
+import { AddReviewDto } from 'src/dto/addReviewDto';
 // import { ImageService } from '../oder/cart/image/image.service';
 // import RoleGuard from 'src/auth/guards/role.guard';
 // import RoleGuard from 'src/auth/guards/role.guard';
@@ -57,13 +57,14 @@ export class BookController {
     @Res() res,
     @UploadedFile() image: Express.Multer.File,
   ) {
-    console.log(bookDto+'____ '+image)
+    console.log(bookDto)
     if (!image) {
       throw new HttpException(
         'Ảnh không được để trống',
         HttpStatus.BAD_REQUEST,
       );
     }
+    console.log(image)
     const newBook = this.bookService.create(
       bookDto,
       image.buffer,
@@ -78,6 +79,7 @@ export class BookController {
         });
       })
       .catch((err) => {
+        console.log(err)
         return res.status(400).json({
           err,
           message: 'Thêm sách thất bại',
@@ -182,10 +184,10 @@ export class BookController {
     return this.bookService.deleteImage(params.id);
   }
 
-  @Post('/evaluate/:id')
+  @Post('/review/:id')
   @UseGuards(JwtAuthGuard, RoleGuard(Role.User))
-  addEvaluate(@Param() param:{id},@Res() res ,@Body() evaluate:AddEvaluateDto){
-    const newEvaluate = this.bookService.addEvaluate(param.id,evaluate);
+  addEvaluate(@Param() param:{id},@Res() res ,@Body() evaluate:AddReviewDto){
+    const newEvaluate = this.bookService.addReview(param.id,evaluate);
     console.log('123')
     newEvaluate
     .then((data) => {
@@ -198,7 +200,7 @@ export class BookController {
       console.log(err);
       return res.status(400).json({
         err,
-        message: 'add Evaluate that bai',
+        message: 'Add Evaluate that bai',
       });
     });
   }
