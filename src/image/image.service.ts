@@ -9,6 +9,8 @@ import { Repository } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 import { ImageEntity } from './ImageEntity';
 import * as dotenv from 'dotenv' 
+import { imageDto } from '../dto/imageDto';
+import { Id } from 'aws-sdk/clients/kinesisanalytics';
 dotenv.config()
 
 
@@ -62,7 +64,14 @@ export class ImageService {
           async updateImg(id:number,image){
             return this.imgRepository.update({id:id},image)
           }
-
+          async createImg(imageDto:imageDto){
+            const image= this.imgRepository.save(imageDto);
+            console.log(image)
+            return image
+          }
+          async findById(id){
+            return await this.imgRepository.findOne({where:{id:id}})
+          }
     // async uploadFile(dataBuffer: Buffer, fileName: string) {
     //     const s3 = new S3();
     //     const uploadResult = await s3.upload({

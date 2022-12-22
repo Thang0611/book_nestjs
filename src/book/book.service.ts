@@ -8,6 +8,7 @@ import { throws } from 'assert';
 import { timeStamp } from 'console';
 import { AddReviewDto } from '../dto/addReviewDto';
 import { ReviewService } from '../review/review.service';
+import { imageDto } from 'src/dto/imageDto';
 @Injectable()
 export class BookService {
     constructor(
@@ -50,21 +51,29 @@ export class BookService {
             const image = await this.updateImage(id, imageBuffer, imageName)
             console.log("update image done")
              await this.bookRepository.update(id,bookUpdate)
-            console.log('update done')
+            console.log('update book done')
             return this.bookRepository.findOneBy({id})
         }
         
-        return this.bookRepository.update(id,book)
+        return this.bookRepository.update(id,bookUpdate)
 
 
     }
 
     async updateBook (id,bookDto:BookDto){
         const book= await this.bookRepository.findOneBy({id})
+        console.log(id)
+        console.log('id')
+        console.log(book?.image)
         if (!book){
              throw new HttpException("Không tìm thấy sách. Không thể cập nhật",HttpStatus.BAD_REQUEST)
         }
-        return this.bookRepository.update(id,bookDto)
+        const bookUpdate=this.bookRepository.create(bookDto)
+        const img=await this.imageService.findById(book?.image?.id)
+        console.log(img)
+        bookUpdate.image=img;
+        console.log(bookUpdate)
+        return this.bookRepository.update(id,bookUpdate)
 
 
     }
@@ -90,6 +99,7 @@ export class BookService {
 
       async addImage(imageBuffer: Buffer, filename: string) {
         const image = await this.imageService.uploadPublicFile(imageBuffer, filename);
+        await this.imageService.createImg(image);
         return image;
       }
 
@@ -111,7 +121,7 @@ export class BookService {
         //   image 
         // });
         if(imageId)
-        this.imageService.updateImg(imageId,image);
+            this.imageService.updateImg(imageId,image);
         // if (imageId){
         //     this.imageService.deleteImg(imageId)
         // }
