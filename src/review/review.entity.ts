@@ -15,18 +15,21 @@ export class ReviewEntity extends BaseEntity{
     // create_at:string;
     
     // @JoinColumn()
-    // @OneToOne(
-    //     () => UserEntity,
-    //   )
-    // user: UserEntity;
+    @OneToOne(
+        () => UserEntity,
+      )
+    user: UserEntity;
     @Column()
     userId:number;
 
-    @JoinColumn()
+    // @JoinColumn()
     @ManyToOne(
         ()=>BookEntity,
         (book)=>book.reviews,
-        {onDelete:"SET NULL"}
+        {
+            onDelete:"SET NULL",
+        // eager:true,
+        }
     )
     book:BookEntity;
 }

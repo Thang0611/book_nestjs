@@ -11,14 +11,14 @@ export class ImageEntity {
  
   @Column()
   public key: string;
-  // @OneToOne(
-  //     () => BookEntity,
-  //     (book)=>book.image,
-  //     {
-  //       eager: true,
-  //       nullable: true
-  //     }
-  //   )
-  //   @JoinColumn()
-  //   book:BookEntity
+  @OneToOne(
+      () => BookEntity,
+      (book)=>book.image,
+      // {
+      //   eager: true,
+      //   nullable: true
+      // }
+    )
+    @JoinColumn()
+    book:BookEntity
 }

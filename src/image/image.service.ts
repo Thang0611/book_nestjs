@@ -38,7 +38,8 @@ export class ImageService {
               key: uploadResult.Key,
               url: uploadResult.Location,
             });
-            await this.imgRepository.save(newFile);
+            // await this.imgRepository.save(newFile);
+            // console.log(newFile)
             return newFile;
           }
 
@@ -57,7 +58,10 @@ export class ImageService {
 
           async deleteImg(id:number){
             return this.imgRepository.delete(id)
-          } 
+          }
+          async updateImg(id:number,image){
+            return this.imgRepository.update({id:id},image)
+          }
 
     // async uploadFile(dataBuffer: Buffer, fileName: string) {
     //     const s3 = new S3();

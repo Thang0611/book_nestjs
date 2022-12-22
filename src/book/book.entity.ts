@@ -3,7 +3,7 @@ import moment from 'moment';
 import { CartItemEntity } from 'src/cart-item/cart-item.entity';
 import { CartEntity } from 'src/cart/cart.entity';
 import { ReviewEntity } from 'src/review/review.entity';
-import { Column, Entity, PrimaryGeneratedColumn, BaseEntity, JoinColumn, OneToOne, OneToMany, ManyToMany } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, BaseEntity, JoinColumn, OneToOne, OneToMany, ManyToMany, RelationId } from 'typeorm';
 import { ImageEntity } from '../image/ImageEntity';
 @Entity('books')
 export class BookEntity extends BaseEntity{
@@ -15,6 +15,8 @@ export class BookEntity extends BaseEntity{
     author:string;
     @Column()
     category:string;
+    @Column()
+    publishingCompany:string;
     @Column('date') 
     date:Date; 
     @Column({})
@@ -23,7 +25,7 @@ export class BookEntity extends BaseEntity{
     decription:string;
     @Column()
     amount:number
-    @JoinColumn()
+    
     @OneToOne(
       () => ImageEntity,
       // (image) => image.book,
@@ -32,8 +34,10 @@ export class BookEntity extends BaseEntity{
         nullable: true
       }
     )
-    public image?: ImageEntity;
     @JoinColumn()
+    public image?: ImageEntity;
+    // @RelationId((book: BookEntity) => book.reviews)
+    
     @OneToMany(
       ()=>ReviewEntity,
       (evaluate)=>evaluate.book,
@@ -45,6 +49,7 @@ export class BookEntity extends BaseEntity{
       }
     
     )
+    // @JoinColumn()
     public reviews?:ReviewEntity[];
     // @ManyToMany(
     //   ()=>CartEntity,

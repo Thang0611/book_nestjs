@@ -44,12 +44,17 @@ export class BookService {
         if (!book){
              throw new HttpException("Không tìm thấy sách. Không thể cập nhật",HttpStatus.BAD_REQUEST)
         }
-        // const bookUpdate=this.bookRepository.create(bookDto)
+        const bookUpdate=this.bookRepository.create(bookDto)
         if ((imageBuffer&&imageName)){
-            await this.updateImage(id, imageBuffer, imageName)
-            return this.bookRepository.update(id,bookDto)
+            console.log('update ...')
+            const image = await this.updateImage(id, imageBuffer, imageName)
+            console.log("update image done")
+             await this.bookRepository.update(id,bookUpdate)
+            console.log('update done')
+            return this.bookRepository.findOneBy({id})
         }
-        return this.bookRepository.update(id,bookDto)
+        
+        return this.bookRepository.update(id,book)
 
 
     }
@@ -89,19 +94,32 @@ export class BookService {
       }
 
       async updateImage(id: number, imageBuffer: Buffer, filename: string) {
+        
         const book = await this.getById(id);
-        const imageId=book?.image.id;
+
+        // console.log(book)
+        const imageId=book?.image?.id;
+        // console.log(book?.image.id)
         if(!book){
             throw new HttpException("Không tim thấy sách.Không thể thêm ảnh",HttpStatus.BAD_REQUEST)
         }
         const image = await this.imageService.uploadPublicFile(imageBuffer, filename);
-        await this.bookRepository.update(id, {
-          ...book,
-          image 
-        });
-        if (imageId){
-            this.imageService.deleteImg(imageId)
-        }
+        // book.image=image;
+
+        // await this.bookRepository.update(id, {
+        //   ...book,
+        //   image 
+        // });
+        if(imageId)
+        this.imageService.updateImg(imageId,image);
+        // if (imageId){
+        //     this.imageService.deleteImg(imageId)
+        // }
+
+                // await this.bookRepository.update(id, {
+        //   ...book,
+        //   image 
+        // });
         return image;
       }
 

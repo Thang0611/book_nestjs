@@ -12,7 +12,6 @@ import * as dotenv from 'dotenv';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { APP_GUARD } from '@nestjs/core';
 import { CartModule } from './cart/cart.module';
-import { LineItemModule } from './lineItem/lineItem.module';
 import RoleGuard from './auth/guards/role.guard';
 import { ImageEntity } from './image/ImageEntity';
 import { ImageModule } from './image/image.module';
@@ -55,7 +54,6 @@ dotenv.config();
     AuthModule,
     ImageModule,
     CartModule,
-    LineItemModule,
     ReviewModule,
     OrderModule,
     CartItemModule,

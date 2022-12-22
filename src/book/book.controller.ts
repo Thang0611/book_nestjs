@@ -49,20 +49,20 @@ export class BookController {
   }
 
   @UseGuards(JwtAuthGuard, RoleGuard(Role.Admin))
-  // @Roles(Role.Admin)
   @Post()
   @UseInterceptors(FileInterceptor('image'))
   addBook(
-    @Body() bookDto: BookDto,
+    @Body() bookDto:BookDto,
     @Res() res,
     @UploadedFile() image: Express.Multer.File,
   ) {
     console.log(bookDto)
+    console.log(image)
     if (!image) {
-      throw new HttpException(
-        'Ảnh không được để trống',
-        HttpStatus.BAD_REQUEST,
-      );
+      return res.status(400).json({
+        message: ['Ảnh không được để trống'],
+        success: false,
+      });
     }
     console.log(image)
     const newBook = this.bookService.create(
@@ -112,6 +112,7 @@ export class BookController {
         });
       })
       .catch((err) => {
+        console.log(err)
         return res.status(400).json({
           err,
           message: 'Update sách thất bại',
@@ -129,6 +130,7 @@ export class BookController {
         });
       })
       .catch((err) => {
+        console.log(err)
         return res.status(400).json({
           err,
           message: 'Update sách thất bại',
@@ -156,20 +158,20 @@ export class BookController {
         });
       });
   }
-  @Put('/image/:id')
-  @UseGuards(JwtAuthGuard, RoleGuard(Role.Admin))
-  @UseInterceptors(FileInterceptor('image'))
-  async updateImage(
-    @Req() request,
-    @Param() params: { id },
-    @UploadedFile() file: Express.Multer.File,
-  ) {
-    return this.bookService.updateImage(
-      params.id,
-      file.buffer,
-      file.originalname,
-    );
-  }
+  // @Put('/image/:id')
+  // @UseGuards(JwtAuthGuard, RoleGuard(Role.Admin))
+  // @UseInterceptors(FileInterceptor('image'))
+  // async updateImage(
+  //   @Req() request,
+  //   @Param() params: { id },
+  //   @UploadedFile() file: Express.Multer.File,
+  // ) {
+  //   return this.bookService.updateImage(
+  //     params.id,
+  //     file.buffer,
+  //     file.originalname,
+  //   );
+  // }
 
   // @Post('/image')
   // @UseGuards(JwtAuthGuard, RoleGuard(Role.Admin))
@@ -178,11 +180,11 @@ export class BookController {
   //   const book = this.bookService.addImage(file.buffer, file.originalname);
   //   return book;
   // }
-  @Delete('/image/:id')
-  @UseGuards(JwtAuthGuard, RoleGuard(Role.Admin))
-  deleteImage(@Param() params: { id }) {
-    return this.bookService.deleteImage(params.id);
-  }
+  // @Delete('/image/:id')
+  // @UseGuards(JwtAuthGuard, RoleGuard(Role.Admin))
+  // deleteImage(@Param() params: { id }) {
+  //   return this.bookService.deleteImage(params.id);
+  // }
 
   @Post('/review/:id')
   @UseGuards(JwtAuthGuard, RoleGuard(Role.User))
