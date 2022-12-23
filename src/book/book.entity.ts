@@ -1,10 +1,11 @@
 import { Transform } from 'class-transformer';
 import moment from 'moment';
-import { CartItemEntity } from 'src/cart-item/cart-item.entity';
-import { CartEntity } from 'src/cart/cart.entity';
+// import { CartItemEntity } from 'src/cart-item/cart-item.entity';
+// import { CartEntity } from 'src/cart/cart.entity';
 import { ReviewEntity } from 'src/review/review.entity';
 import { Column, Entity, PrimaryGeneratedColumn, BaseEntity, JoinColumn, OneToOne, OneToMany, ManyToMany, RelationId } from 'typeorm';
 import { ImageEntity } from '../image/ImageEntity';
+import { OrderedEntity } from 'src/ordered/ordered.entity';
 @Entity('books')
 export class BookEntity extends BaseEntity{
     @PrimaryGeneratedColumn('uuid')
@@ -51,14 +52,27 @@ export class BookEntity extends BaseEntity{
     )
     // @JoinColumn()
     public reviews?:ReviewEntity[];
+
+    @ManyToMany(
+      ()=>OrderedEntity,
+      (ordered)=>ordered.book,
+      {
+        cascade: true,
+        nullable:true,
+        onDelete:"CASCADE"
+      }
+    )
+    @JoinColumn()
+    ordered:OrderedEntity
+
     // @ManyToMany(
     //   ()=>CartEntity,
     //   cart=>cart.books
     //   )
     //   cart:CartEntity[]
-    @OneToMany(
-      ()=>CartItemEntity,
-      cartItem=>cartItem.book
-    )
-    cartItem:CartItemEntity[]
+    // @OneToMany(
+    //   ()=>CartItemEntity,
+    //   cartItem=>cartItem.book
+    // )
+    // cartItem:CartItemEntity[]
 }

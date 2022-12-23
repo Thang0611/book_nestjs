@@ -195,15 +195,15 @@ export class BookController {
     .then((data) => {
       return res.status(HttpStatus.OK).json({
         data,
-        message: 'Add Evaluate thành công',
+        message: 'Thêm đánh giá thành công',
       });
     })
     .catch((err) => {
       console.log(err);
       return res.status(400).json({
         err,
-        message: 'Add Evaluate that bai',
-      });
+        message: 'Thêm đánh giá Thất bại',
+      });                                         
     });
   }
 

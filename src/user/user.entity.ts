@@ -1,7 +1,8 @@
 import { BaseEntity, BeforeInsert, Column, Entity, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import * as bcrypt from'bcryptjs';
 import { Role } from "src/auth/emuns/role.enum";
-import { CartEntity } from "src/cart/cart.entity";
+import { ReviewEntity } from '../review/review.entity';
+import { OrderedEntity } from "src/ordered/ordered.entity";
 
 @Entity('users')
 export class UserEntity extends BaseEntity{
@@ -16,18 +17,32 @@ export class UserEntity extends BaseEntity{
     @Column()
     email:string;
 
-    @OneToOne(
-      ()=>CartEntity, 
-      cart=>cart.user
-    )
-    cart:CartEntity
+    // @OneToOne(
+    //   ()=>CartEntity, 
+    //   cart=>cart.user
+    // )
+    // cart:CartEntity
     @Column({
         type: 'enum',
         enum: Role,
         default: Role.User
       })
       public role: Role
+      @OneToOne(
+        
+        () => ReviewEntity,
 
+      )
+    review: ReviewEntity;
+
+    @OneToOne(
+      ()=>OrderedEntity,
+      // lỗi maximum
+      // {
+      //     eager:true   
+      // }
+   )
+    ordered:OrderedEntity
     // @BeforeInsert()
     // async hashPassword(){
     //     this.password= await bcrypt.hash(this.password,10)

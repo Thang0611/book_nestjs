@@ -16,21 +16,28 @@ constructor(
         private readonly usersRepository: Repository<UserEntity>,
       ) {}
 
-  async addUser(registerDto: registerDto): Promise<UserEntity|any> {
+  async addUser(registerDto: registerDto) {
     if(registerDto.password!==registerDto.passwordcf){
       throw new HttpException('mat khau khong trung',400);
     } 
-    const checkUser= await this.usersRepository.findOne({where:{username: registerDto.username}});
+    console.log('1')
+    const checkUser=await this.usersRepository.findOne({where:{username: registerDto.username}});
+    console.log(checkUser)
     if (checkUser){
-        throw new ConflictException(`User with username ${registerDto.username} already exists`);
+        throw new ConflictException(`Tên đăng nhập ${registerDto.username} đã tồn tại`);
     }
     const newUser = await this.usersRepository.create(registerDto);
+    console.log('3')
     newUser.password = await hasPassword(newUser.password)
     return newUser.save();
   }
 
   async findUser(username: string): Promise<UserEntity | undefined> {
     const user = await this.usersRepository.findOne({where:{username: username}});
+    return user;
+  }
+  async findAllUser() {
+    const user = await this.usersRepository.find();
     return user;
   }
 

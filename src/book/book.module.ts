@@ -9,6 +9,7 @@ import { ReviewModule } from '../review/review.module';
 @Module({
   imports:[TypeOrmModule.forFeature([BookEntity]),ImageModule,ReviewModule],
   providers: [BookService],
-  controllers: [BookController]
+  controllers: [BookController],
+  exports:[BookService]
 })
 export class BookModule {}

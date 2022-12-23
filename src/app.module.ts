@@ -11,16 +11,20 @@ import * as dotenv from 'dotenv';
 
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { APP_GUARD } from '@nestjs/core';
-import { CartModule } from './cart/cart.module';
+// import { CartModule } from './cart/cart.module';
 import RoleGuard from './auth/guards/role.guard';
 import { ImageEntity } from './image/ImageEntity';
 import { ImageModule } from './image/image.module';
 import { ReviewEntity } from './review/review.entity';
 import { ReviewModule } from './review/review.module';
-import { OrderModule } from './order/order.module';
-import { CartItemModule } from './cart-item/cart-item.module';
-import { CartEntity } from './cart/cart.entity';
-import { CartItemEntity } from './cart-item/cart-item.entity';
+// import { OrderModule } from './order/order.module';
+// import { CartItemModule } from './cart-item/cart-item.module';
+// import { CartEntity } from './cart/cart.entity';
+// import { CartItemEntity } from './cart-item/cart-item.entity';
+import { OrderedController } from './ordered/ordered.controller';
+import { OrderedService } from './ordered/ordered.service';
+import { OrderedModule } from './ordered/ordered.module';
+import { OrderedEntity } from './ordered/ordered.entity';
 
 
 
@@ -37,7 +41,7 @@ dotenv.config();
       username: 'root',
       password: 'b19dcat187',
       database: 'libraly_app',
-      entities: [UserEntity,BookEntity,ImageEntity,ReviewEntity,CartItemEntity,CartEntity],
+      entities: [UserEntity,BookEntity,ImageEntity,ReviewEntity,OrderedEntity],
       synchronize: true
 
       // type: 'mysql',
@@ -53,10 +57,8 @@ dotenv.config();
     BookModule,
     AuthModule,
     ImageModule,
-    CartModule,
     ReviewModule,
-    OrderModule,
-    CartItemModule,
+    OrderedModule,
   ],
     controllers: [AppController],
     providers: [AppService,
