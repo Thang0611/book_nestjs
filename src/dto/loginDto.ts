@@ -2,10 +2,10 @@ import { IsNotEmpty } from "class-validator";
 
 export class loginDto{
 
-    @IsNotEmpty({message:'Username không được để trống'})
+    @IsNotEmpty({message:'Tên đăng nhập không được để trống'})
     username:string;
 
-    @IsNotEmpty({message:'Password không được để trống'})
+    @IsNotEmpty({message:'Mật khẩu không được để trống'})
     password:string
     
 }

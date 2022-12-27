@@ -21,10 +21,9 @@ import { ReviewModule } from './review/review.module';
 // import { CartItemModule } from './cart-item/cart-item.module';
 // import { CartEntity } from './cart/cart.entity';
 // import { CartItemEntity } from './cart-item/cart-item.entity';
-import { OrderedController } from './ordered/ordered.controller';
-import { OrderedService } from './ordered/ordered.service';
-import { OrderedModule } from './ordered/ordered.module';
-import { OrderedEntity } from './ordered/ordered.entity';
+
+import { OrderModule } from './order/order.module';
+import { OrderEntity } from './order/order.entity';
 
 
 
@@ -41,7 +40,7 @@ dotenv.config();
       username: 'root',
       password: 'b19dcat187',
       database: 'libraly_app',
-      entities: [UserEntity,BookEntity,ImageEntity,ReviewEntity,OrderedEntity],
+      entities: [UserEntity,BookEntity,ImageEntity,ReviewEntity,OrderEntity],
       synchronize: true
 
       // type: 'mysql',
@@ -58,7 +57,7 @@ dotenv.config();
     AuthModule,
     ImageModule,
     ReviewModule,
-    OrderedModule,
+    OrderModule,
   ],
     controllers: [AppController],
     providers: [AppService,

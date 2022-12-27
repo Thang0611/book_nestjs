@@ -1,11 +1,12 @@
 import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToOne } from 'typeorm';
 import { BookEntity } from '../book/book.entity';
 import { UserEntity } from '../user/user.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity("reviews")
 export class ReviewEntity extends BaseEntity{
-    @PrimaryGeneratedColumn("uuid")
-    id:number;
+    @PrimaryGeneratedColumn()
+    id:string;
     @Column()
     star:number;
     @Column()
@@ -14,13 +15,19 @@ export class ReviewEntity extends BaseEntity{
     // date:Date; 
     // create_at:string;
     
-    // @JoinColumn()
-    @OneToOne(
+    
+    @ManyToOne(
         () => UserEntity,
+        (user:UserEntity)=>user.review,
+        {
+            onDelete:"SET NULL",
+            eager:true,
+        }
       )
+    @JoinColumn()
     user: UserEntity;
-    @Column()
-    userId:number;
+    // @Column()
+    // userId:number;
 
     // @JoinColumn()
     @ManyToOne(
@@ -31,5 +38,6 @@ export class ReviewEntity extends BaseEntity{
         // eager:true,
         }
     )
+    @JoinColumn()
     book:BookEntity;
 }

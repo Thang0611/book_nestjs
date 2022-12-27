@@ -32,8 +32,12 @@ constructor(
     return newUser.save();
   }
 
-  async findUser(username: string): Promise<UserEntity | undefined> {
+  async findUser(username): Promise<UserEntity | undefined> {
     const user = await this.usersRepository.findOne({where:{username: username}});
+    return user;
+  }
+  async findUserById(id): Promise<UserEntity | undefined> {
+    const user =  this.usersRepository.findOne({where:{id: id}});
     return user;
   }
   async findAllUser() {

@@ -73,16 +73,15 @@ export class BookController {
     newBook
       .then((data) => {
         return res.status(HttpStatus.OK).json({
-          data: data,
-          message: 'Thêm sách thành công',
+          ...data,
+          message: ['Thêm sách thành công'],
           success: true,
         });
       })
       .catch((err) => {
         console.log(err)
         return res.status(400).json({
-          err,
-          message: 'Thêm sách thất bại',
+          message: ['Thêm sách thất bại'],
           success: false,
         });
       });
@@ -107,15 +106,14 @@ export class BookController {
       book
       .then((data) => {
         return res.status(HttpStatus.OK).json({
-          message: 'Update sách thành công',
+          message: ['Update sách thành công'],
           success: true,
         });
       })
       .catch((err) => {
         console.log(err)
         return res.status(400).json({
-          err,
-          message: 'Update sách thất bại',
+          message: ['Update sách thất bại'],
           success: false,
         });
       });
@@ -124,16 +122,16 @@ export class BookController {
       const book=this.bookService.updateBook(params.id, bookDto)
     book
       .then((data) => {
+        console.log(data)
         return res.status(HttpStatus.OK).json({
-          message: 'Update sách thành công',
+          message: ['Update sách thành công'],
           success: true,
         });
       })
       .catch((err) => {
         console.log(err)
         return res.status(400).json({
-          err,
-          message: 'Update sách thất bại',
+          message: ['Update sách thất bại'],
           success: false,
         });
       });
@@ -141,14 +139,14 @@ export class BookController {
   }
   @Delete('/:id')
   @UseGuards(JwtAuthGuard, RoleGuard(Role.Admin))
-  async deleteBook(@Param() params: { id: number }, @Res() res) {
+  async deleteBook(@Param() params: { id: string }, @Res() res) {
     const bookDelete = this.bookService.deleteBook(params.id);
     bookDelete
       .then((data) => {
         console.log(data);
         return res.status(HttpStatus.OK).json({
-          data,
-          message: 'Delete sách thành công',
+          ...data,
+          message: ['Delete sách thành công'],
         });
       })
       .catch((err) => {
@@ -189,20 +187,19 @@ export class BookController {
   @Post('/review/:id')
   @UseGuards(JwtAuthGuard, RoleGuard(Role.User))
   addEvaluate(@Param() param:{id},@Res() res ,@Body() evaluate:AddReviewDto){
+    console.log(param.id)
     const newEvaluate = this.bookService.addReview(param.id,evaluate);
-    console.log('123')
     newEvaluate
     .then((data) => {
       return res.status(HttpStatus.OK).json({
-        data,
-        message: 'Thêm đánh giá thành công',
+        ...data,
+        message: ['Thêm đánh giá thành công'],
       });
     })
     .catch((err) => {
       console.log(err);
       return res.status(400).json({
-        err,
-        message: 'Thêm đánh giá Thất bại',
+        message: ['Thêm đánh giá Thất bại'],
       });                                         
     });
   }

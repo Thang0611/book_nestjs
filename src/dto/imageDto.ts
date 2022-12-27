@@ -1,7 +1,7 @@
 import { IsNotEmpty, IsString } from "class-validator";
 
 export class imageDto{
-    id: number;
+    id: string;
  
     url: string;
    

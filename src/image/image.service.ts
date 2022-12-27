@@ -46,7 +46,7 @@ export class ImageService {
           }
 
           
-          async deletePublicFile(id: number) {
+          async deletePublicFile(id: string) {
             const image = await this.imgRepository.findOne({where:{id}});
             const s3 = new S3();
              await s3.deleteObject({
@@ -58,10 +58,10 @@ export class ImageService {
             await this.imgRepository.delete(id);
           }
 
-          async deleteImg(id:number){
+          async deleteImg(id:string){
             return this.imgRepository.delete(id)
           }
-          async updateImg(id:number,image){
+          async updateImg(id:string,image){
             return this.imgRepository.update({id:id},image)
           }
           async createImg(imageDto:imageDto){

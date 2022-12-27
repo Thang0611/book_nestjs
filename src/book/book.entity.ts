@@ -5,11 +5,12 @@ import moment from 'moment';
 import { ReviewEntity } from 'src/review/review.entity';
 import { Column, Entity, PrimaryGeneratedColumn, BaseEntity, JoinColumn, OneToOne, OneToMany, ManyToMany, RelationId } from 'typeorm';
 import { ImageEntity } from '../image/ImageEntity';
-import { OrderedEntity } from 'src/ordered/ordered.entity';
+import { OrderEntity } from 'src/order/order.entity';
+import { UserEntity } from 'src/user/user.entity';
 @Entity('books')
 export class BookEntity extends BaseEntity{
     @PrimaryGeneratedColumn('uuid')
-    id:number;
+    id:string;
     @Column()
     title:string;
     @Column()
@@ -35,8 +36,9 @@ export class BookEntity extends BaseEntity{
         nullable: true
       }
     )
+    // 444223388 pham tuan hung acb nd :0987027740 nguyen huu thang
     @JoinColumn()
-    public image?: ImageEntity;
+    public image: ImageEntity;
     // @RelationId((book: BookEntity) => book.reviews)
     
     @OneToMany(
@@ -53,17 +55,31 @@ export class BookEntity extends BaseEntity{
     // @JoinColumn()
     public reviews?:ReviewEntity[];
 
-    @ManyToMany(
-      ()=>OrderedEntity,
-      (ordered)=>ordered.book,
+    // @ManyToMany(()=>UserEntity,(user:UserEntity)=>user.book)
+    // user: UserEntity[]
+
+    // @ManyToMany(
+    //   ()=>OrderEntity,
+    //   (order)=>order.book,
+    //   {
+    //     cascade: true,
+    //     nullable:true,
+    //     onDelete:"CASCADE"
+    //   }
+    // )
+    // // @JoinColumn()
+    // order:OrderEntity[]
+
+        @OneToOne(
+      ()=>OrderEntity,
       {
         cascade: true,
         nullable:true,
         onDelete:"CASCADE"
       }
     )
-    @JoinColumn()
-    ordered:OrderedEntity
+    // @JoinColumn()
+    order:OrderEntity;
 
     // @ManyToMany(
     //   ()=>CartEntity,

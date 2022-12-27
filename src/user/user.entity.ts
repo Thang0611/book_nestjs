@@ -1,13 +1,15 @@
-import { BaseEntity, BeforeInsert, Column, Entity, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, BeforeInsert, Column, Entity, OneToOne, PrimaryGeneratedColumn, OneToMany, JoinColumn, JoinTable, ManyToMany } from 'typeorm';
 import * as bcrypt from'bcryptjs';
 import { Role } from "src/auth/emuns/role.enum";
 import { ReviewEntity } from '../review/review.entity';
-import { OrderedEntity } from "src/ordered/ordered.entity";
+import { OrderEntity } from "src/order/order.entity";
+import { BookDto } from '../dto/bookDto';
+import { BookEntity } from '../book/book.entity';
 
 @Entity('users')
 export class UserEntity extends BaseEntity{
-    @PrimaryGeneratedColumn()
-    id: number;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
     @Column()
     username : string;
     @Column()
@@ -22,27 +24,57 @@ export class UserEntity extends BaseEntity{
     //   cart=>cart.user
     // )
     // cart:CartEntity
+
+    @OneToMany(
+      ()=>OrderEntity,
+      (order:OrderEntity)=>order.user,
+      {
+          nullable:true     
+      }
+  )
+  // @JoinColumn()
+  order:OrderEntity[]
     @Column({
         type: 'enum',
         enum: Role,
         default: Role.User
       })
       public role: Role
-      @OneToOne(
-        
+      @OneToMany(
         () => ReviewEntity,
+        (review:ReviewEntity)=>review.user
 
       )
-    review: ReviewEntity;
+      review: ReviewEntity[];
 
-    @OneToOne(
-      ()=>OrderedEntity,
-      // lỗi maximum
-      // {
-      //     eager:true   
-      // }
-   )
-    ordered:OrderedEntity
+      // @ManyToMany(()=>BookDto,(book:BookEntity)=>book.user)
+      // @JoinTable({ 
+      //   name: 'order_user',
+      //   joinColumn: { name: 'userId' },
+      //   inverseJoinColumn: { name: 'bookId' }
+      // })
+      // book: BookEntity[]
+
+
+    // @OneToOne(
+    //   ()=>ReviewEntity,
+    // )
+
+
+
+    // @OneToMany(
+    //   ()=>OrderEntity,
+    //   order=>order.user
+    //   // lỗi maximum
+    //   // {
+    //   //     eager:true   
+    //   // }
+    // )
+    // @JoinColumn()
+    // order:OrderEntity[]
+
+
+
     // @BeforeInsert()
     // async hashPassword(){
     //     this.password= await bcrypt.hash(this.password,10)

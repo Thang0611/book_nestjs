@@ -10,7 +10,7 @@ export class UserController {
     const user = await this.UserService.addUser(registerDto);
     console.log(user)
     return res.status(HttpStatus.OK).json({
-      user,
+      ...user,
       message:'Đăng kí thành công'
     }
     

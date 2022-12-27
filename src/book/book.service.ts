@@ -1,7 +1,7 @@
 import { Injectable, HttpException, HttpStatus, BadRequestException, NotFoundException } from '@nestjs/common';
 import { BookEntity } from './book.entity';
-import { Repository } from 'typeorm';
-import {InjectRepository} from '@nestjs/typeorm'
+import { DataSource, EntityManager, Repository, createQueryBuilder } from 'typeorm';
+import { InjectRepository, InjectDataSource, InjectEntityManager } from '@nestjs/typeorm';
 import { BookDto } from '../dto/bookDto';
 import { ImageService } from 'src/image/image.service';
 import { throws } from 'assert';
@@ -9,23 +9,45 @@ import { timeStamp } from 'console';
 import { AddReviewDto } from '../dto/addReviewDto';
 import { ReviewService } from '../review/review.service';
 import { imageDto } from 'src/dto/imageDto';
+import { ImageEntity } from '../image/ImageEntity';
+import { ReviewEntity } from 'src/review/review.entity';
+import { UserEntity } from 'src/user/user.entity';
+import { OrderEntity } from '../order/order.entity';
 @Injectable()
 export class BookService {
     constructor(
-        @InjectRepository(BookEntity)
-        private bookRepository:Repository<BookEntity>,
+        @InjectRepository(BookEntity) private bookRepository:Repository<BookEntity>,
+        @InjectDataSource() private dataSource:DataSource,
+        @InjectEntityManager() private bookManager:EntityManager,
         private imageService:ImageService,
         private evaluateService:ReviewService
     ){}
 
 
     async getAllBooks(){
-        const book= await this.bookRepository.find()
-        console.log(book)
+        const book=await this.dataSource. createQueryBuilder(BookEntity,'books')
+        .leftJoinAndSelect('books.image','images')
+        .getMany()
+        // const book=await this.bookRepository.find()
         return book
     }
+    async getBookByUser(){
+        const book=await this.dataSource. createQueryBuilder(BookEntity,'books')
+        .leftJoinAndSelect('books.image','images')
+        .getMany()
+        return book
+    }
+    
     async detailBook(id){
-        return await this.getById(id)
+        const book=await this.dataSource. createQueryBuilder(BookEntity,'books')
+        .leftJoinAndSelect('books.image','images')
+        .leftJoinAndSelect('books.reviews',"reviews")
+        .leftJoinAndSelect('reviews.user','user')
+        .select(['books','images','reviews','user.fullname','user.username',])
+        .where('books.id= :id',{id:id})
+        .orderBy('reviews.id',"DESC")
+        .getOne()
+        return book
     }
 
 
@@ -43,7 +65,7 @@ export class BookService {
     async updateBookAndImage (id,bookDto:BookDto,imageBuffer:Buffer,imageName:string){
         const book= await this.bookRepository.findOneBy({id})
         if (!book){
-             throw new HttpException("Không tìm thấy sách. Không thể cập nhật",HttpStatus.BAD_REQUEST)
+             throw new HttpException(["Không tìm thấy sách. Không thể cập nhật"],HttpStatus.BAD_REQUEST)
         }
         const bookUpdate=this.bookRepository.create(bookDto)
         if ((imageBuffer&&imageName)){
@@ -92,7 +114,7 @@ export class BookService {
         await this.imageService.deletePublicFile(imageId)
         return bookDeleted
     }
-    async getById(id:number){
+    async getById(id:string){
         const book=await this.bookRepository.findOne({where:{id:id}})
         return book;
     }
@@ -103,7 +125,7 @@ export class BookService {
         return image;
       }
 
-      async updateImage(id: number, imageBuffer: Buffer, filename: string) {
+      async updateImage(id: string, imageBuffer: Buffer, filename: string) {
         
         const book = await this.getById(id);
 
@@ -142,13 +164,20 @@ export class BookService {
         }
 
 
-        async addReview(id:number,evaluate:AddReviewDto){
+        async addReview(id:string,review:AddReviewDto){
+            const check=await this.dataSource
+            .createQueryBuilder(OrderEntity,'orders')
+            .where('orders.userId= :userId',{userId:review.userId})
+            .andWhere('order.bookId= :bookId',{bookId:id})
+            if (check){
+                throw new HttpException("Mỗi người dùng chỉ có 1 đánh giá!",400)
+            }
             const book=await this.getById(id);
-            const bookid=book.id
+            console.log(book)
             if (!book){
                 throw new NotFoundException("Khong tim thay sach.Khong the danh gia")
             }
-            const newReview= await this.evaluateService.createReview(book,evaluate)
+            const newReview= await this.evaluateService.createReview(book,review)
             return  newReview
         }
 

@@ -3,8 +3,8 @@ import { BookEntity } from '../book/book.entity';
 
 @Entity('images')
 export class ImageEntity {
-  @PrimaryGeneratedColumn()
-  public id: number;
+  @PrimaryGeneratedColumn('uuid')
+  public id: string;
  
   @Column()
   public url: string;
@@ -19,6 +19,5 @@ export class ImageEntity {
       //   nullable: true
       // }
     )
-    @JoinColumn()
     book:BookEntity
 }
