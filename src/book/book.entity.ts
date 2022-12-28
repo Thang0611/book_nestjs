@@ -45,7 +45,7 @@ export class BookEntity extends BaseEntity{
       ()=>ReviewEntity,
       (evaluate)=>evaluate.book,
       {
-        eager:true,
+        // eager:true,
         cascade: true,
         onDelete:"CASCADE"
 

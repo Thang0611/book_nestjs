@@ -13,7 +13,7 @@ export class registerDto{
 
     @IsNotEmpty({message:'Họ và tên không được để trống!'})
     fullname:string;
-    @IsEmail()
+    @IsEmail({message:'Email sai định dạng '})
     @IsNotEmpty({message:'Email không được để trống '})
     email:string;
     // @IsString()

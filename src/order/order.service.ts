@@ -31,14 +31,19 @@ export class OrderService {
     }
     async getOrder(id:string){
         // const book=await this.orderRepository.find({where:{userId:id}})
-        const book=this.dataSource
+        const order=this.dataSource
         .createQueryBuilder(OrderEntity,'orders')
         .leftJoinAndSelect('orders.user','user')
-        .leftJoinAndSelect('orders.book','book')
-        .select(['orders.id','orders.amount','user.username','user.fullname','book',])
+        .leftJoinAndSelect('orders.book','books')
+        .select(['orders.id','orders.amount','user.username','user.fullname','books'])
         .getMany()
-        console.log(book)
-        return book;
+        return order;
+    }
+    async deleteOrder(id:string){
+        const order=await this.orderRepository.findOne({where:{id}})
+        if (!order) throw new HttpException("Không tìm thấy order này!",HttpStatus.BAD_REQUEST)
+        console.log(id)
+        return await this.orderRepository.delete(id)
     }
     async getById(id:string){
         const book=await this.orderRepository.findOne({where:{id:id}})

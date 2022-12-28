@@ -140,6 +140,7 @@ export class BookController {
   @Delete('/:id')
   @UseGuards(JwtAuthGuard, RoleGuard(Role.Admin))
   async deleteBook(@Param() params: { id: string }, @Res() res) {
+    console.log(params.id)
     const bookDelete = this.bookService.deleteBook(params.id);
     bookDelete
       .then((data) => {
@@ -199,6 +200,7 @@ export class BookController {
     .catch((err) => {
       console.log(err);
       return res.status(400).json({
+        ...err,
         message: ['Thêm đánh giá Thất bại'],
       });                                         
     });

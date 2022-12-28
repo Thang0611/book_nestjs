@@ -100,10 +100,34 @@ export class BookService {
 
     }
 
+    async updateAmount (id,amount){
+        const book= await this.bookRepository.findOneBy({id})
+        console.log(1)
+        console.log(book)
+        if (!book){
+             throw new HttpException("Không tìm thấy sách. Không thể cập nhật",HttpStatus.BAD_REQUEST)
+        }
+        const bookUpdate=this.bookRepository.create(book)
+        bookUpdate.amount=bookUpdate.amount-amount
+        console.log(2)
+        console.log(bookUpdate)
+        // const img=await this.imageService.findById(book?.image?.id)
+        // console.log(img)
+        // bookUpdate.image=img;
+        // console.log(bookUpdate)
+        return this.bookRepository.update(id,bookUpdate)
+
+
+    }
+
     
     async deleteBook(id){
-        const book= await this.bookRepository.findOneBy({id})
-        console.log(book)
+        // const book= await this.dataSource
+        // .createQueryBuilder(BookEntity,'books')
+        // .where('books.id= :id',{id:id})
+        // .getOne()
+        // console.log(book)
+        const book=await this.bookRepository.findOne({where:{id:id}})
         const imageId=book?.image?.id
         console.log(imageId)
         if (!book){
@@ -111,6 +135,7 @@ export class BookService {
             throw new HttpException("Không tìm thấy sách. Không thể Xóa",HttpStatus.BAD_REQUEST)
         }
         const bookDeleted=await this.bookRepository.delete(id)
+        console.log("1"+ bookDeleted)
         await this.imageService.deletePublicFile(imageId)
         return bookDeleted
     }
@@ -166,11 +191,12 @@ export class BookService {
 
         async addReview(id:string,review:AddReviewDto){
             const check=await this.dataSource
-            .createQueryBuilder(OrderEntity,'orders')
-            .where('orders.userId= :userId',{userId:review.userId})
-            .andWhere('order.bookId= :bookId',{bookId:id})
+            .createQueryBuilder(ReviewEntity,'reviews')
+            .where('reviews.userId= :userId',{userId:review.userId})
+            .andWhere('reviews.bookId= :bookId',{bookId:id})
+            .getOne()
             if (check){
-                throw new HttpException("Mỗi người dùng chỉ có 1 đánh giá!",400)
+                throw new HttpException("Mỗi người dùng chỉ có 1 đánh giá!",HttpStatus.BAD_REQUEST)
             }
             const book=await this.getById(id);
             console.log(book)
