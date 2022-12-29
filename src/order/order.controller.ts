@@ -44,7 +44,7 @@ export class OrderController {
     }
     @UseGuards(JwtAuthGuard,RoleGuard(Role.User||Role.Admin))
     @Delete("/:id")
-    async deleteOrder(@Res() res, @Body() order:DeleteOrderDto,@Param() param:{id}){
+    async deleteOrder(@Res() res,@Param() param:{id}){
         console.log(param.id)
         this.orderService.deleteOrder(param.id)
         // .then(data=>{
