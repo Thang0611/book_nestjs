@@ -3,7 +3,7 @@ import moment from 'moment';
 // import { CartItemEntity } from 'src/cart-item/cart-item.entity';
 // import { CartEntity } from 'src/cart/cart.entity';
 import { ReviewEntity } from 'src/review/review.entity';
-import { Column, Entity, PrimaryGeneratedColumn, BaseEntity, JoinColumn, OneToOne, OneToMany, ManyToMany, RelationId } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, BaseEntity, JoinColumn, OneToOne, OneToMany, ManyToMany, RelationId, ManyToOne, CreateDateColumn } from 'typeorm';
 import { ImageEntity } from '../image/ImageEntity';
 import { OrderEntity } from 'src/order/order.entity';
 import { UserEntity } from 'src/user/user.entity';
@@ -54,6 +54,8 @@ export class BookEntity extends BaseEntity{
     )
     // @JoinColumn()
     public reviews?:ReviewEntity[];
+    @CreateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP(6)" })
+    public created_at: Date;
 
     // @ManyToMany(()=>UserEntity,(user:UserEntity)=>user.book)
     // user: UserEntity[]
@@ -72,6 +74,7 @@ export class BookEntity extends BaseEntity{
 
         @OneToOne(
       ()=>OrderEntity,
+      // (order)=>order.book,
       {
         cascade: true,
         nullable:true,
@@ -79,7 +82,7 @@ export class BookEntity extends BaseEntity{
       }
     )
     // @JoinColumn()
-    order:OrderEntity;
+      order:OrderEntity;
 
     // @ManyToMany(
     //   ()=>CartEntity,

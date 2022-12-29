@@ -1,4 +1,4 @@
-import { BaseEntity, BeforeInsert, Column, Entity, OneToOne, PrimaryGeneratedColumn, OneToMany, JoinColumn, JoinTable, ManyToMany } from 'typeorm';
+import { BaseEntity, BeforeInsert, Column, Entity, OneToOne, PrimaryGeneratedColumn, OneToMany, JoinColumn, JoinTable, ManyToMany, CreateDateColumn } from 'typeorm';
 import * as bcrypt from'bcryptjs';
 import { Role } from "src/auth/emuns/role.enum";
 import { ReviewEntity } from '../review/review.entity';
@@ -18,6 +18,8 @@ export class UserEntity extends BaseEntity{
     fullname:string;
     @Column()
     email:string;
+    @CreateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP(6)" })
+    public created_at: Date;
 
     // @OneToOne(
     //   ()=>CartEntity, 
@@ -29,7 +31,8 @@ export class UserEntity extends BaseEntity{
       ()=>OrderEntity,
       (order:OrderEntity)=>order.user,
       {
-          nullable:true     
+          nullable:true,
+          onDelete:'CASCADE',  
       }
   )
   // @JoinColumn()
@@ -38,6 +41,7 @@ export class UserEntity extends BaseEntity{
         type: 'enum',
         enum: Role,
         default: Role.User
+        
       })
       public role: Role
       @OneToMany(

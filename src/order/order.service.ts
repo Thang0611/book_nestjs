@@ -36,6 +36,7 @@ export class OrderService {
         .leftJoinAndSelect('orders.user','user')
         .leftJoinAndSelect('orders.book','books')
         .select(['orders.id','orders.amount','user.username','user.fullname','books'])
+        .where("orders.userId= :id",{id})
         .getMany()
         return order;
     }

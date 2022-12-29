@@ -1,6 +1,6 @@
 import { BookEntity } from "src/book/book.entity";
 import { UserEntity } from "src/user/user.entity";
-import { BaseEntity, Column, Entity, OneToOne, PrimaryGeneratedColumn, JoinColumn, OneToMany, ManyToMany, ManyToOne, JoinTable } from 'typeorm';
+import { BaseEntity, Column, Entity, OneToOne, PrimaryGeneratedColumn, JoinColumn, OneToMany, ManyToMany, ManyToOne, JoinTable, CreateDateColumn } from 'typeorm';
 
 @Entity("orders")
 export class OrderEntity extends BaseEntity{
@@ -13,12 +13,14 @@ export class OrderEntity extends BaseEntity{
         (user:UserEntity)=>user.order,
         {
             eager:true,
-            nullable:true     
+            nullable:true,
+            onDelete:"CASCADE" 
         }
     )
-    // @JoinColumn()
+    @JoinColumn()
     user:UserEntity
-
+    @CreateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP(6)" })
+    public created_at: Date;
     // @ManyToMany(
     //     ()=>BookEntity,
     //     (book)=>book.order,
@@ -32,11 +34,14 @@ export class OrderEntity extends BaseEntity{
 
         @OneToOne(
         ()=>BookEntity,
+        // (book)=>book.order,
         {
             eager:true,
             nullable:true, 
             createForeignKeyConstraints: false,
-        })
+            onDelete:"CASCADE"
+        }
+        )
         @JoinColumn()    
         book:BookEntity;
 

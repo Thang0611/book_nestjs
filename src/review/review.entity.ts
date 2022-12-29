@@ -1,4 +1,4 @@
-import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToOne } from 'typeorm';
+import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToOne, CreateDateColumn } from 'typeorm';
 import { BookEntity } from '../book/book.entity';
 import { UserEntity } from '../user/user.entity';
 import { Exclude } from 'class-transformer';
@@ -11,6 +11,8 @@ export class ReviewEntity extends BaseEntity{
     star:number;
     @Column()
     comment:string;
+    @CreateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP(6)" })
+    public created_at: Date;
     // @Column('date') 
     // date:Date; 
     // create_at:string;
