@@ -72,9 +72,9 @@ export class BookEntity extends BaseEntity{
     // // @JoinColumn()
     // order:OrderEntity[]
 
-        @OneToOne(
+        @OneToMany(
       ()=>OrderEntity,
-      // (order)=>order.book,
+      (order)=>order.book,
       {
         cascade: true,
         nullable:true,

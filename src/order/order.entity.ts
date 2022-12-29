@@ -32,13 +32,13 @@ export class OrderEntity extends BaseEntity{
     // @JoinTable()
     // book:BookEntity;
 
-        @OneToOne(
+        @ManyToOne(
         ()=>BookEntity,
-        // (book)=>book.order,
+        (book)=>book.order,
         {
             eager:true,
             nullable:true, 
-            createForeignKeyConstraints: false,
+            // createForeignKeyConstraints: false,
             onDelete:"CASCADE"
         }
         )

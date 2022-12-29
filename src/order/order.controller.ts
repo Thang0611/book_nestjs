@@ -21,14 +21,14 @@ export class OrderController {
             return this.bookService.updateAmount(order.bookId,order.amount)
         })
         .then(data=>{
-            return res.status(200).json({
+            return res.status(HttpStatus.OK).json({
                 ...data,
                 message:["Đặt sách thành công"]
             })
         })
         .catch(err=>{
             console.log(err)
-            return res.status(200).json({
+            return res.status(HttpStatus.BAD_REQUEST).json({
                 ...err,
                 message:["Đặt sách thất bại"]
             })

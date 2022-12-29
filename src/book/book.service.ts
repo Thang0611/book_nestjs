@@ -27,6 +27,7 @@ export class BookService {
     async getAllBooks(){
         const book=await this.dataSource. createQueryBuilder(BookEntity,'books')
         .leftJoinAndSelect('books.image','images')
+        .orderBy('books.created_at',"DESC")
         .getMany()
         // const book=await this.bookRepository.find()
         return book
