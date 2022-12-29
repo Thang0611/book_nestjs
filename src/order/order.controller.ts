@@ -43,14 +43,14 @@ export class OrderController {
         )
     }
     @UseGuards(JwtAuthGuard,RoleGuard(Role.User||Role.Admin))
-    @Delete()
-    async deleteOrder(@Res() res, @Body() order:DeleteOrderDto){
-        console.log(order)
-        this.orderService.deleteOrder(order.orderId)
-        .then(data=>{
-            console.log(data)
-            return this.bookService.updateAmount(order.bookId,(0-order.amount))
-        })
+    @Delete("/:id")
+    async deleteOrder(@Res() res, @Body() order:DeleteOrderDto,@Param() param:{id}){
+        console.log(param.id)
+        this.orderService.deleteOrder(param.id)
+        // .then(data=>{
+        //     console.log(data)
+        //     return this.bookService.updateAmount(order.bookId,(0-order.amount))
+        // })
         .then(data=>{
             return res.status(200).json({
                 ...data,

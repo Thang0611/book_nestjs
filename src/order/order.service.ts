@@ -5,6 +5,7 @@ import { UserService } from '../user/user.service';
 import { BookService } from '../book/book.service';
 import { OrderEntity } from './order.entity';
 import { OrderDto } from 'src/dto/orderDto';
+import { id } from 'aws-sdk/clients/datapipeline';
 
 @Injectable()
 export class OrderService {
@@ -41,10 +42,16 @@ export class OrderService {
         .getMany()
         return order;
     }
-    async deleteOrder(id:string){
-        const order=await this.orderRepository.findOne({where:{id}})
+    async deleteOrder(id){
+        const order=await this.orderRepository.findOne({where:{id:id}})
+        console.log(1+""+order)
+        console.log(order.book)
+        // const book=await this.bookService.detailBook(order.book.id)
+        // const user= await this.userService.findUserById(order.userId)
         if (!order) throw new HttpException("Không tìm thấy order này!",HttpStatus.BAD_REQUEST)
+        this.bookService.updateAmount(order.book.id,(0-order.amount))
         console.log(id)
+
         return await this.orderRepository.delete(id)
     }
     async getById(id:string){
